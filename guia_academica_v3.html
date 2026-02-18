@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultura, Ambiente y Sociedad | Areandina MSP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════ */
+:root {
+  --bg0: #060d1a;
+  --bg1: #0b1422;
+  --bg2: #111d30;
+  --surface: rgba(255,255,255,0.042);
+  --surface-hover: rgba(255,255,255,0.072);
+  --border: rgba(255,255,255,0.07);
+  --border-hi: rgba(255,255,255,0.14);
+
+  --jade:   #3ecf8e;
+  --jade-d: #28b879;
+  --gold:   #f0c060;
+  --plum:   #b89af0;
+  --coral:  #f07878;
+  --sky:    #60c8f0;
+  --teal:   #38e0c8;
+
+  --tx1: #eef2f7;
+  --tx2: rgba(238,242,247,.60);
+  --tx3: rgba(238,242,247,.32);
+
+  --ff-display: 'Libre Baskerville', Georgia, serif;
+  --ff-body: 'Outfit', system-ui, sans-serif;
+
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 26px;
+
+  --nav-h: 58px;
+  --sidebar-w: 220px;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--ff-body);
+  background: var(--bg0);
+  color: var(--tx1);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 15px;
+}
+button { font-family: var(--ff-body); cursor: pointer; border: none; background: none; }
+input  { font-family: var(--ff-body); }
+a { color: inherit; text-decoration: none; }
+
+/* ═══════════════════════════════════════════════════
+   CANVAS BACKGROUND
+═══════════════════════════════════════════════════ */
+#canvas-bg {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.orb-1 { width: 600px; height: 600px; top: -180px; left: -150px; background: radial-gradient(circle, rgba(62,207,142,.09) 0%, transparent 70%); animation-delay: 0s; }
+.orb-2 { width: 500px; height: 500px; bottom: -120px; right: -100px; background: radial-gradient(circle, rgba(184,154,240,.08) 0%, transparent 70%); animation-delay: -6s; }
+.orb-3 { width: 350px; height: 350px; top: 45%; left: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(96,200,240,.05) 0%, transparent 70%); animation-delay: -12s; }
+@keyframes drift {
+  from { transform: translate(0,0); }
+  to   { transform: translate(30px, 20px); }
+}
+.orb-1 { animation-name: drift1; }
+.orb-2 { animation-name: drift2; }
+@keyframes drift1 { from{transform:translate(0,0)} to{transform:translate(25px,15px)} }
+@keyframes drift2 { from{transform:translate(0,0)} to{transform:translate(-20px,25px)} }
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.028'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(62,207,142,.3); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════════ */
+#shell {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════ */
+header {
+  background: linear-gradient(180deg, rgba(6,13,26,.98) 0%, rgba(11,20,34,.94) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(2rem,5vw,3.5rem) clamp(1.25rem,4vw,4rem) clamp(1.75rem,4vw,3rem);
+  position: relative; overflow: hidden;
+}
+/* decorative line across header */
+header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--jade), var(--sky), transparent);
+  opacity: .6;
+}
+
+.header-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 1.5rem;
+}
+
+.header-left {}
+.kicker {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .7rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--tx3);
+  margin-bottom: .85rem;
+}
+.kicker-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--jade); animation: blink 2.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+h1 {
+  font-family: var(--ff-display);
+  font-size: clamp(1.8rem, 4.5vw, 3.6rem);
+  font-weight: 700; line-height: 1.08;
+  letter-spacing: -.02em;
+  background: linear-gradient(140deg, #eef2f7 0%, #a8e6cc 45%, #60c8f0 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: .75rem;
+}
+.header-sub {
+  font-size: clamp(.82rem, 1.6vw, .95rem);
+  color: var(--tx2); max-width: 560px; line-height: 1.7; font-weight: 300;
+}
+.header-sub em { color: var(--gold); font-style: normal; font-weight: 500; }
+
+.header-meta {
+  display: flex; flex-direction: column; gap: .5rem; align-items: flex-end;
+  flex-shrink: 0;
+}
+.meta-pill {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .3rem .75rem;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  font-size: .7rem; font-weight: 500; color: var(--tx2);
+  white-space: nowrap;
+}
+.meta-pill svg { width: 12px; height: 12px; opacity: .7; }
+
+/* progress ring in header */
+.prog-ring-wrap {
+  position: relative; width: 72px; height: 72px;
+}
+.prog-ring-wrap svg { transform: rotate(-90deg); }
+.prog-ring-bg { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 4; }
+.prog-ring-fill { fill: none; stroke: var(--jade); stroke-width: 4; stroke-linecap: round;
+  stroke-dasharray: 188; stroke-dashoffset: 188;
+  transition: stroke-dashoffset .8s cubic-bezier(.4,0,.2,1);
+}
+.prog-ring-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.prog-ring-label span:first-child { font-size: .9rem; font-weight: 700; color: var(--jade); line-height: 1; }
+.prog-ring-label span:last-child  { font-size: .55rem; color: var(--tx3); letter-spacing: .04em; text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════════════
+   STICKY NAV
+═══════════════════════════════════════════════════ */
+nav#main-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6,13,26,.93);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  height: var(--nav-h);
+  display: flex; align-items: center;
+  padding: 0 clamp(1rem,4vw,3rem);
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto; width: 100%;
+  display: flex; align-items: center; gap: .35rem;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .5rem .95rem;
+  border-radius: var(--r-sm);
+  font-size: .78rem; font-weight: 500;
+  color: var(--tx3);
+  transition: all .18s ease;
+  white-space: nowrap; flex-shrink: 0;
+  position: relative;
+}
+.tab-btn:hover { color: var(--tx1); background: var(--surface); }
+.tab-btn.active { color: var(--jade); background: rgba(62,207,142,.1); }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 2px; border-radius: 1px;
+  background: var(--jade);
+}
+.tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════
+   MAIN CONTENT — DESKTOP SIDEBAR LAYOUT
+═══════════════════════════════════════════════════ */
+.page-body {
+  flex: 1;
+  display: flex;
+  max-width: 1400px; margin: 0 auto; width: 100%;
+  padding: clamp(1.5rem,3vw,2.5rem) clamp(1.25rem,3vw,3rem);
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Sidebar — hidden on mobile, visible md+ */
+aside#sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: calc(var(--nav-h) + 1.5rem);
+  max-height: calc(100vh - var(--nav-h) - 3rem);
+  overflow-y: auto;
+  display: none; /* hidden by default; shown via media query */
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.sidebar-section-label {
+  font-size: .6rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--tx3);
+  padding: .5rem .6rem .25rem;
+}
+.sidebar-link {
+  display: flex; align-items: center; gap: .55rem;
+  padding: .45rem .6rem;
+  border-radius: var(--r-sm);
+  font-size: .75rem; font-weight: 400; color: var(--tx2);
+  cursor: pointer;
+  transition: all .15s;
+  border: 1px solid transparent;
+}
+.sidebar-link:hover { color: var(--tx1); background: var(--surface); }
+.sidebar-link.active-link { color: var(--jade); background: rgba(62,207,142,.09); border-color: rgba(62,207,142,.15); }
+.sidebar-num {
+  width: 20px; height: 20px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .62rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* Check icon in sidebar */
+.sidebar-check { margin-left: auto; flex-shrink: 0; }
+.sidebar-check svg { width: 12px; height: 12px; }
+
+main { flex: 1; min-width: 0; }
+
+/* ═══════════════════════════════════════════════════
+   TAB CONTENT
+═══════════════════════════════════════════════════ */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeUp .35s ease-out; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══════════════════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════════════════ */
+.sec-head {
+  margin-bottom: 2rem;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+}
+.sec-head-left h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(1.4rem,3vw,2rem);
+  font-weight: 700; color: var(--tx1);
+  margin-bottom: .25rem;
+}
+.sec-head-left p { font-size: .83rem; color: var(--tx3); }
+
+/* ═══════════════════════════════════════════════════
+   UNIT BLOCKS
+═══════════════════════════════════════════════════ */
+.unit-block { margin-bottom: 2.5rem; }
+.unit-strip {
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: .65rem;
+  border-bottom: 1px solid var(--border);
+}
+.unit-badge {
+  font-size: .65rem; font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase;
+  padding: .25rem .65rem;
+  border-radius: 100px;
+}
+.ub1 { background:rgba(62,207,142,.14); color:var(--jade); }
+.ub2 { background:rgba(240,192,96,.14);  color:var(--gold); }
+.ub3 { background:rgba(184,154,240,.14); color:var(--plum); }
+.ub4 { background:rgba(240,120,120,.14); color:var(--coral);}
+.unit-title {
+  font-family: var(--ff-display);
+  font-size: clamp(.95rem,2vw,1.2rem);
+  font-weight: 700; color: var(--tx1);
+}
+.unit-progress {
+  margin-left: auto; display: flex; align-items: center; gap: .4rem;
+  font-size: .7rem; color: var(--tx3);
+}
+.unit-bar {
+  width: 60px; height: 4px; border-radius: 2px;
+  background: var(--border); overflow: hidden;
+}
+.unit-bar-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+.fill-jade  { background: var(--jade); }
+.fill-gold  { background: var(--gold); }
+.fill-plum  { background: var(--plum); }
+.fill-coral { background: var(--coral); }
+
+/* ═══════════════════════════════════════════════════
+   SESSION CARD
+═══════════════════════════════════════════════════ */
+.session-card {
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: .65rem;
+  overflow: hidden;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.session-card:hover { border-color: var(--border-hi); background: var(--surface-hover); }
+.session-card.done { border-color: rgba(62,207,142,.2); }
+
+.sess-header {
+  display: flex; align-items: center; gap: clamp(.75rem,2vw,1.1rem);
+  padding: clamp(.85rem,2vw,1.1rem) clamp(.85rem,2vw,1.2rem);
+  cursor: pointer;
+}
+
+.sess-num {
+  width: 42px; height: 42px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-display); font-size: .95rem; font-weight: 700;
+  flex-shrink: 0; position: relative;
+}
+.sn1 { background: rgba(62,207,142,.13); color: var(--jade); }
+.sn2 { background: rgba(240,192,96,.13);  color: var(--gold); }
+.sn3 { background: rgba(184,154,240,.13); color: var(--plum); }
+.sn4 { background: rgba(240,120,120,.13); color: var(--coral);}
+
+/* checkmark overlay when done */
+.done-overlay {
+  position: absolute; inset: 0; border-radius: var(--r-md);
+  background: rgba(62,207,142,.85);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+}
+.session-card.done .done-overlay { opacity: 1; }
+.done-overlay svg { width: 18px; height: 18px; color: var(--bg0); }
+
+.sess-meta { flex: 1; min-width: 0; }
+.sess-meta h4 {
+  font-family: var(--ff-display);
+  font-size: clamp(.88rem,2vw,1.02rem);
+  font-weight: 700; color: var(--tx1); line-height: 1.3;
+  margin-bottom: .18rem;
+}
+.sess-sub { font-size: .72rem; color: var(--tx3); line-height: 1.4; }
+
+.sess-actions {
+  display: flex; align-items: center; gap: .5rem; flex-shrink: 0;
+}
+.check-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--border-hi);
+  background: transparent; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.check-btn:hover { border-color: var(--jade); background: rgba(62,207,142,.1); }
+.session-card.done .check-btn { background: var(--jade); border-color: var(--jade); }
+.check-btn svg { width: 13px; height: 13px; color: var(--bg0); opacity: 0; transition: opacity .2s; }
+.session-card.done .check-btn svg { opacity: 1; }
+
+.sess-arrow {
+  width: 18px; height: 18px; color: var(--tx3);
+  transition: transform .25s ease; flex-shrink: 0;
+}
+.session-card.open .sess-arrow { transform: rotate(180deg); }
+
+/* SESSION BODY */
+.sess-body {
+  display: none;
+  padding: 0 clamp(.85rem,2vw,1.2rem) clamp(.85rem,2vw,1.1rem);
+  border-top: 1px solid var(--border);
+}
+.session-card.open .sess-body { display: block; }
+.sess-body-inner { padding-top: 1rem; }
+
+.sess-focus {
+  font-size: .84rem; color: var(--tx2); line-height: 1.7;
+  margin-bottom: .85rem;
+}
+.sess-focus strong { color: var(--tx1); font-weight: 600; }
+
+.tags-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+.tag {
+  padding: .18rem .6rem; border-radius: 100px;
+  font-size: .68rem; font-weight: 500;
+}
+.t1{background:rgba(62,207,142,.1);color:var(--jade);}
+.t2{background:rgba(240,192,96,.1);color:var(--gold);}
+.t3{background:rgba(184,154,240,.1);color:var(--plum);}
+.t4{background:rgba(240,120,120,.1);color:var(--coral);}
+
+.milestone {
+  display: flex; align-items: flex-start; gap: .55rem;
+  padding: .6rem .85rem; border-radius: var(--r-sm);
+  font-size: .76rem; font-weight: 500; line-height: 1.5;
+  margin-top: .85rem;
+}
+.ms-gold  { background: rgba(240,192,96,.09);  color: var(--gold);  border:1px solid rgba(240,192,96,.2);  }
+.ms-teal  { background: rgba(56,224,200,.09);  color: var(--teal);  border:1px solid rgba(56,224,200,.2);  }
+
+/* ═══════════════════════════════════════════════════
+   QUOTE CARD
+═══════════════════════════════════════════════════ */
+.quote-card {
+  margin-top: 2rem; padding: 1.4rem 1.75rem;
+  border-radius: var(--r-lg);
+  border-left: 3px solid var(--jade);
+  background: linear-gradient(135deg, rgba(62,207,142,.06), rgba(96,200,240,.03));
+}
+.quote-card p {
+  font-family: var(--ff-display);
+  font-size: clamp(.9rem,2vw,1.05rem);
+  font-style: italic; line-height: 1.7; color: var(--tx2);
+}
+
+/* ═══════════════════════════════════════════════════
+   TIMELINE TAB
+═══════════════════════════════════════════════════ */
+.timeline-intro {
+  padding: 1rem 1.25rem; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .84rem; color: var(--tx2); line-height: 1.65;
+  margin-bottom: 2rem;
+}
+.timeline-intro strong { color: var(--tx1); }
+
+/* Session grid */
+.tl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  margin-bottom: 2rem;
+}
+
+.tl-cell {
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.tl-cell::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.tl-cell.f1::before { background: linear-gradient(90deg,var(--jade),var(--teal)); }
+.tl-cell.f2::before { background: linear-gradient(90deg,var(--gold),#d4a030); }
+.tl-cell.f3::before { background: linear-gradient(90deg,var(--plum),var(--coral)); }
+.tl-cell.done-cell { border-color: rgba(62,207,142,.25); background: rgba(62,207,142,.04); }
+
+.tl-num {
+  font-family: var(--ff-display); font-size: 1.8rem; font-weight: 700;
+  opacity: .12; position: absolute; top: .5rem; right: .75rem; line-height: 1;
+}
+.tl-badge { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .4rem; }
+.tl-badge.b1 { color: var(--jade); }
+.tl-badge.b2 { color: var(--gold); }
+.tl-badge.b3 { color: var(--plum); }
+.tl-badge.b4 { color: var(--coral); }
+.tl-title { font-size: .78rem; font-weight: 500; color: var(--tx1); line-height: 1.35; margin-bottom: .5rem; }
+.tl-phase-tag {
+  display: inline-block;
+  font-size: .62rem; padding: .14rem .5rem;
+  border-radius: 100px; font-weight: 600;
+}
+.tp1 { background:rgba(62,207,142,.14);color:var(--jade); }
+.tp2 { background:rgba(240,192,96,.14);color:var(--gold); }
+.tp3 { background:rgba(184,154,240,.14);color:var(--plum); }
+.tl-done-stamp {
+  display: none; align-items: center; gap: .3rem;
+  margin-top: .45rem; font-size: .67rem; color: var(--jade); font-weight: 500;
+}
+.tl-cell.done-cell .tl-done-stamp { display: flex; }
+
+/* Phase summary bar */
+.tl-phase-summary {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem;
+}
+.tl-phase-box {
+  padding: 1rem 1.1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  position: relative; overflow: hidden;
+}
+.tl-phase-box::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; }
+.tl-phase-box.pb1::before { background:linear-gradient(90deg,var(--jade),var(--teal)); }
+.tl-phase-box.pb2::before { background:linear-gradient(90deg,var(--gold),#d4a030); }
+.tl-phase-box.pb3::before { background:linear-gradient(90deg,var(--plum),var(--coral)); }
+.tl-phase-name { font-size: .68rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--tx3); margin-bottom: .25rem; }
+.tl-phase-desc { font-size: .78rem; color: var(--tx2); line-height: 1.4; }
+.tl-phase-sess { font-size: .68rem; color: var(--tx3); margin-top: .4rem; }
+.tl-phase-pct { font-family: var(--ff-display); font-size: 1.5rem; font-weight: 700; float: right; margin-top: -.1rem; }
+.pct-jade{color:var(--jade);} .pct-gold{color:var(--gold);} .pct-plum{color:var(--plum);}
+
+/* ═══════════════════════════════════════════════════
+   PROYECTO TAB
+═══════════════════════════════════════════════════ */
+.proj-intro {
+  padding: 1.1rem 1.35rem; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .85rem; color: var(--tx2); line-height: 1.7;
+  margin-bottom: 2rem; text-align: center;
+}
+.proj-intro strong { color: var(--tx1); }
+
+.phases-stack { display: grid; gap: 1rem; }
+@media (min-width: 900px) {
+  .phases-stack { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+.phase-card {
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  position: relative;
+}
+.phase-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.pc1::after { background: linear-gradient(90deg,var(--jade),var(--teal)); }
+.pc2::after { background: linear-gradient(90deg,var(--gold),#d4a030); }
+.pc3::after { background: linear-gradient(90deg,var(--plum),var(--coral)); }
+
+.phase-top {
+  padding: 1.35rem 1.35rem .9rem;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem;
+}
+.phase-badge-row { display: flex; flex-direction: column; gap: .4rem; }
+.phase-tag {
+  font-size: .65rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: .22rem .65rem;
+  border-radius: 100px; display: inline-block;
+}
+.pt1{background:rgba(62,207,142,.14);color:var(--jade);}
+.pt2{background:rgba(240,192,96,.14);color:var(--gold);}
+.pt3{background:rgba(184,154,240,.14);color:var(--plum);}
+.phase-sess { font-size: .7rem; color: var(--tx3); }
+.phase-pct { font-family: var(--ff-display); font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.ppct1{color:var(--jade);} .ppct2{color:var(--gold);} .ppct3{color:var(--plum);}
+
+.phase-body { padding: 0 1.35rem 1.35rem; }
+.phase-body h3 { font-family: var(--ff-display); font-size: 1.1rem; font-weight: 700; margin-bottom: .9rem; }
+.phase-items { display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1rem; }
+.phase-item { display: flex; align-items: flex-start; gap: .6rem; font-size: .8rem; color: var(--tx2); line-height: 1.55; }
+.pi-icon { font-size: .88rem; flex-shrink: 0; margin-top: .06em; }
+.phase-item strong { color: var(--tx1); font-weight: 500; }
+.delivery {
+  padding: .75rem .9rem; border-radius: var(--r-sm);
+  background: rgba(96,200,240,.07); border: 1px solid rgba(96,200,240,.18);
+  font-size: .75rem; color: var(--tx2); line-height: 1.5;
+}
+.delivery .dlabel { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--sky); margin-bottom: .25rem; }
+
+/* Weight bar */
+.weight-bar-wrap {
+  margin-top: 2rem; padding: 1.25rem;
+  border-radius: var(--r-md); border: 1px solid var(--border);
+  background: var(--surface);
+}
+.weight-bar-wrap h4 { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--tx3); margin-bottom: 1rem; text-align: center; }
+.wrow { display: flex; align-items: center; gap: .6rem; font-size: .78rem; margin-bottom: .4rem; }
+.wdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.wbar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; display: flex; margin-top: .85rem; }
+.wseg { height: 100%; }
+
+/* ═══════════════════════════════════════════════════
+   RÚBRICAS TAB
+═══════════════════════════════════════════════════ */
+.rubric-nav { display: flex; gap: .45rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.rub-btn {
+  padding: .45rem 1rem; border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: .78rem; font-weight: 500; color: var(--tx2);
+  transition: all .18s;
+}
+.rub-btn:hover { background: var(--surface-hover); color: var(--tx1); }
+.rub-btn.ar1 { background:rgba(62,207,142,.12); color:var(--jade); border-color:rgba(62,207,142,.25); }
+.rub-btn.ar2 { background:rgba(240,192,96,.12);  color:var(--gold); border-color:rgba(240,192,96,.25); }
+.rub-btn.ar3 { background:rgba(184,154,240,.12); color:var(--plum); border-color:rgba(184,154,240,.25); }
+
+.rubric-panel { display: none; }
+.rubric-panel.open { display: block; }
+
+.rp-header {
+  display: flex; align-items: center; gap: .8rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+}
+.rp-icon {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700;
+}
+.ri1{background:rgba(62,207,142,.14);color:var(--jade);}
+.ri2{background:rgba(240,192,96,.14);color:var(--gold);}
+.ri3{background:rgba(184,154,240,.14);color:var(--plum);}
+.rp-header h3 { font-family: var(--ff-display); font-size: 1rem; font-weight: 700; }
+
+.rp-body { padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: .75rem; }
+.rub-row {
+  padding: .9rem 1rem; border-radius: var(--r-sm);
+  background: rgba(255,255,255,.028); border: 1px solid var(--border);
+}
+.rub-row-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .3rem; }
+.rub-label { font-size: .83rem; font-weight: 500; }
+.rub-label small { color: var(--tx3); font-weight: 400; font-size: .72rem; }
+.rub-input {
+  width: 68px; padding: .32rem .5rem;
+  border-radius: var(--r-sm); border: 1px solid var(--border-hi);
+  background: rgba(255,255,255,.07); color: var(--tx1);
+  font-family: var(--ff-body); font-size: .85rem; font-weight: 600;
+  text-align: center; transition: border-color .2s, box-shadow .2s;
+}
+.rub-input:focus { outline: none; border-color: rgba(62,207,142,.5); box-shadow: 0 0 0 3px rgba(62,207,142,.1); }
+.rub-desc { font-size: .74rem; color: var(--tx3); line-height: 1.5; }
+
+.rub-total {
+  margin: .25rem 0;
+  padding: 1rem; text-align: center;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, rgba(62,207,142,.09), rgba(96,200,240,.05));
+  border: 1px solid rgba(62,207,142,.18);
+}
+.rub-total-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .07em; color: var(--tx3); margin-bottom: .3rem; }
+.rub-total-val { font-family: var(--ff-display); font-size: 2.4rem; font-weight: 700; color: var(--jade); line-height: 1; }
+
+/* FINAL GRADE CALCULATOR */
+.calc-card {
+  margin-top: 2rem; padding: 1.35rem;
+  border-radius: var(--r-xl); border: 1px solid var(--border-hi);
+  background: var(--surface);
+  position: relative; overflow: hidden;
+}
+.calc-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--jade), var(--sky), var(--plum));
+}
+.calc-card h4 { font-family: var(--ff-display); font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; }
+.calc-rows { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.1rem; }
+.calc-row {
+  display: grid; grid-template-columns: 1fr auto auto;
+  align-items: center; gap: .75rem;
+  padding: .65rem .85rem; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: rgba(255,255,255,.025);
+  font-size: .82rem;
+}
+.calc-row .cr-label { color: var(--tx2); font-weight: 400; }
+.calc-row .cr-weight { color: var(--tx3); font-size: .72rem; }
+.calc-row-result { font-weight: 600; font-size: .88rem; min-width: 40px; text-align: right; }
+.calc-final {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .85rem 1rem; border-radius: var(--r-sm);
+  background: rgba(62,207,142,.08); border: 1px solid rgba(62,207,142,.2);
+}
+.calc-final-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--tx2); font-weight: 600; }
+.calc-final-val { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 700; color: var(--jade); }
+.calc-grade-lbl { font-size: .72rem; color: var(--tx3); margin-top: -.1rem; }
+
+/* ESCALA */
+.escala { display: grid; grid-template-columns: repeat(5,1fr); gap: .5rem; margin-top: 1.75rem; }
+@media (max-width: 500px) { .escala { grid-template-columns: repeat(3,1fr); } }
+.esc-item { text-align: center; padding: .65rem .4rem; border-radius: var(--r-sm); border: 1px solid var(--border); }
+.esc-val { font-family: var(--ff-display); font-size: 1.05rem; font-weight: 700; margin-bottom: .15rem; }
+.esc-lbl { font-size: .65rem; color: var(--tx3); }
+.er{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.18);} .er .esc-val{color:#f87171;}
+.eo{background:rgba(251,146,60,.07);border-color:rgba(251,146,60,.18);} .eo .esc-val{color:#fb923c;}
+.ey{background:rgba(240,192,96,.07);border-color:rgba(240,192,96,.18);} .ey .esc-val{color:var(--gold);}
+.eg{background:rgba(62,207,142,.07);border-color:rgba(62,207,142,.18);} .eg .esc-val{color:var(--jade);}
+.ec{background:rgba(96,200,240,.07);border-color:rgba(96,200,240,.18);} .ec .esc-val{color:var(--sky);}
+
+/* ═══════════════════════════════════════════════════
+   BIBLIOGRAFÍA TAB
+═══════════════════════════════════════════════════ */
+.drive-card {
+  padding: 1.25rem 1.5rem; border-radius: var(--r-lg);
+  border: 1px solid rgba(96,200,240,.2);
+  background: linear-gradient(135deg, rgba(96,200,240,.07), rgba(62,207,142,.04));
+  margin-bottom: 1.75rem;
+}
+.drive-card h3 { font-family: var(--ff-display); font-size: 1rem; font-weight: 700; margin-bottom: .35rem; }
+.drive-card p  { font-size: .82rem; color: var(--tx2); margin-bottom: .85rem; line-height: 1.6; }
+.drive-url {
+  display: block;
+  font-family: monospace; font-size: .73rem; color: var(--sky);
+  padding: .55rem .8rem; border-radius: var(--r-sm);
+  background: rgba(255,255,255,.04); border: 1px solid var(--border-hi);
+  word-break: break-all; margin-bottom: .75rem;
+}
+.copy-btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .4rem .85rem; border-radius: var(--r-sm);
+  border: 1px solid rgba(96,200,240,.25);
+  background: rgba(96,200,240,.1); color: var(--sky);
+  font-size: .76rem; font-weight: 500; cursor: pointer;
+  transition: all .18s;
+}
+.copy-btn:hover { background: rgba(96,200,240,.18); }
+
+.bib-cat { border-radius: var(--r-md); border: 1px solid var(--border); overflow: hidden; margin-bottom: .6rem; }
+.bib-cat-btn {
+  width: 100%; padding: .9rem 1.1rem;
+  display: flex; align-items: center; gap: .85rem;
+  background: var(--surface); border: none;
+  color: var(--tx1); cursor: pointer; text-align: left;
+  transition: background .18s;
+}
+.bib-cat-btn:hover { background: var(--surface-hover); }
+.bib-icon {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem; flex-shrink: 0;
+}
+.bib-info { flex: 1; }
+.bib-info h4 { font-family: var(--ff-display); font-size: .92rem; font-weight: 700; margin-bottom: .1rem; }
+.bib-info p  { font-size: .72rem; color: var(--tx3); }
+.bib-arrow { width: 15px; height: 15px; color: var(--tx3); transition: transform .22s; }
+.bib-cat.open .bib-arrow { transform: rotate(180deg); }
+
+.bib-list {
+  display: none; flex-direction: column; gap: .55rem;
+  padding: .85rem 1.1rem;
+  border-top: 1px solid var(--border);
+}
+.bib-cat.open .bib-list { display: flex; }
+.bib-entry {
+  padding: .75rem .9rem; border-radius: var(--r-sm);
+  background: rgba(255,255,255,.025); border-left: 2px solid var(--border-hi);
+  font-size: .78rem; color: var(--tx2); line-height: 1.6;
+}
+.bib-entry em { font-style: italic; color: var(--tx1); }
+.bib-doi { font-size: .69rem; color: var(--tx3); margin-top: .25rem; }
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.25rem clamp(1.25rem,4vw,3rem);
+  text-align: center;
+  font-size: .72rem; color: var(--tx3);
+}
+footer span { color: var(--jade); }
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+#toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  padding: .6rem 1rem; border-radius: var(--r-sm);
+  background: var(--jade); color: var(--bg0);
+  font-size: .78rem; font-weight: 700;
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — DESKTOP SIDEBAR
+═══════════════════════════════════════════════════ */
+@media (min-width: 1100px) {
+  aside#sidebar { display: flex; }
+  .tab-btn span.label-text { display: inline; }
+}
+@media (max-width: 1099px) {
+  .header-meta .prog-ring-wrap { display: none; }
+}
+@media (max-width: 780px) {
+  .header-inner { grid-template-columns: 1fr; }
+  .header-meta { flex-direction: row; align-items: center; justify-content: flex-start; }
+  .tl-grid { grid-template-columns: repeat(3,1fr); }
+  .tl-phase-summary { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .tl-grid { grid-template-columns: repeat(2,1fr); }
+  .sess-meta h4 { font-size: .85rem; }
+}
+@media (max-width: 380px) {
+  .tl-grid { grid-template-columns: 1fr; }
+}
+
+/* Wide screens — max content width  */
+@media (min-width: 1600px) {
+  :root { font-size: 16px; }
+  .page-body { max-width: 1600px; }
+}
+</style>
+</head>
+<body>
+<div id="canvas-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div id="shell">
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="kicker"><span class="kicker-dot"></span>Maestría en Salud Pública &nbsp;·&nbsp; Areandina &nbsp;·&nbsp; Semestre 4</div>
+      <h1>Cultura, Ambiente<br>y Sociedad</h1>
+      <p class="header-sub">
+        Asignatura de profundización para salubristas en su último semestre.
+        Vincula <em>Ciencia Crítica</em>, <em>Alternativas al Desarrollo</em>
+        y soluciones territoriales co-construidas con las comunidades.
+      </p>
+    </div>
+    <div class="header-meta">
+      <div class="meta-pill">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        9 Sesiones &nbsp;·&nbsp; 4 Unidades
+      </div>
+      <div class="meta-pill">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        3 Fases del Proyecto
+      </div>
+      <div class="prog-ring-wrap" title="Progreso del semestre">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle class="prog-ring-bg" cx="36" cy="36" r="30"/>
+          <circle class="prog-ring-fill" id="prog-ring-fill" cx="36" cy="36" r="30"/>
+        </svg>
+        <div class="prog-ring-label">
+          <span id="prog-pct">0%</span>
+          <span>Visto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ NAV ══════════ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <button class="tab-btn active" onclick="showTab('sesiones',this)" data-tab="sesiones">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <span class="label-text">Sesiones</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('timeline',this)" data-tab="timeline">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      <span class="label-text">Línea de Tiempo</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('proyecto',this)" data-tab="proyecto">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      <span class="label-text">Proyecto</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('rubricas',this)" data-tab="rubricas">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="label-text">Rúbricas</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('bibliografia',this)" data-tab="bibliografia">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <span class="label-text">Bibliografía</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════ BODY ══════════ -->
+<div class="page-body">
+
+  <!-- SIDEBAR (desktop only) -->
+  <aside id="sidebar" aria-label="Índice de sesiones">
+    <div class="sidebar-section-label">Unidad 1 · Salud Global</div>
+    <div class="sidebar-link" onclick="goToSession(1)" id="sl-1">
+      <div class="sidebar-num sn1" style="background:rgba(62,207,142,.13);color:var(--jade)">1</div>
+      Apertura Territorial
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-1"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-link" onclick="goToSession(2)" id="sl-2">
+      <div class="sidebar-num sn1" style="background:rgba(62,207,142,.13);color:var(--jade)">2</div>
+      Salud Ambiental
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-2"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-link" onclick="goToSession(3)" id="sl-3">
+      <div class="sidebar-num sn1" style="background:rgba(62,207,142,.13);color:var(--jade)">3</div>
+      Determinación Social
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-3"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-section-label" style="margin-top:.5rem">Unidad 2 · Contextos</div>
+    <div class="sidebar-link" onclick="goToSession(4)" id="sl-4">
+      <div class="sidebar-num sn2" style="background:rgba(240,192,96,.13);color:var(--gold)">4</div>
+      Problemas Ambientales
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-link" onclick="goToSession(5)" id="sl-5">
+      <div class="sidebar-num sn2" style="background:rgba(240,192,96,.13);color:var(--gold)">5</div>
+      Política Ambiental
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-section-label" style="margin-top:.5rem">Unidad 3 · Cultura</div>
+    <div class="sidebar-link" onclick="goToSession(6)" id="sl-6">
+      <div class="sidebar-num sn3" style="background:rgba(184,154,240,.13);color:var(--plum)">6</div>
+      Ontologías · Pluriverso
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-link" onclick="goToSession(7)" id="sl-7">
+      <div class="sidebar-num sn3" style="background:rgba(184,154,240,.13);color:var(--plum)">7</div>
+      Saberes Populares
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-7"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-section-label" style="margin-top:.5rem">Unidad 4 · Sistemas</div>
+    <div class="sidebar-link" onclick="goToSession(8)" id="sl-8">
+      <div class="sidebar-num sn4" style="background:rgba(240,120,120,.13);color:var(--coral)">8</div>
+      Interculturalidad
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-8"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+    <div class="sidebar-link" onclick="goToSession(9)" id="sl-9">
+      <div class="sidebar-num sn4" style="background:rgba(240,120,120,.13);color:var(--coral)">9</div>
+      Comunicación · Cierre
+      <span class="sidebar-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none" id="sc-9"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span>
+    </div>
+  </aside>
+
+  <main>
+
+  <!-- ══════════════════════════════════
+       TAB: SESIONES
+  ══════════════════════════════════ -->
+  <div id="pane-sesiones" class="tab-pane active">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <h2>Ruta de Aprendizaje</h2>
+        <p>9 sesiones &nbsp;·&nbsp; 4 unidades del microcurrículo &nbsp;·&nbsp; Marca cada sesión como vista</p>
+      </div>
+    </div>
+
+    <!-- UNIDAD 1 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub1">Unidad 1</span>
+        <span class="unit-title">Salud Global y Salud Ambiental</span>
+        <div class="unit-progress" id="up-1">
+          <span id="up-1-txt">0/3</span>
+          <div class="unit-bar"><div class="unit-bar-fill fill-jade" id="ub-fill-1" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="session-card" id="sess-1" onclick="toggleSess(this,1)">
+        <div class="sess-header">
+          <div class="sess-num sn1"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>01</div>
+          <div class="sess-meta">
+            <h4>Apertura Territorial y Fundamentos de Salud Global</h4>
+            <span class="sess-sub">Salud global vs. salud colectiva · Enfoques críticos · Poder y política</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(1)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Los estudiantes reconocen el territorio como tejido vivo y complejo. Se contrastan los fundamentos de la salud global convencional (OMS, CDSS) con los de la salud colectiva latinoamericana, explorando las tensiones de poder que configuran la agenda global de salud y sus implicaciones para los territorios del Sur.</p>
+          <div class="tags-row"><span class="tag t1">Fundamentos Salud Global</span><span class="tag t1">Salud Colectiva</span><span class="tag t1">Política y Poder</span><span class="tag t1">Territorio</span></div>
+        </div></div>
+      </div>
+
+      <div class="session-card" id="sess-2" onclick="toggleSess(this,2)">
+        <div class="sess-header">
+          <div class="sess-num sn1"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>02</div>
+          <div class="sess-meta">
+            <h4>Salud Ambiental, Antropoceno y Capitaloceno</h4>
+            <span class="sess-sub">Crisis ambiental · Extractivismo · Cambio climático y salud · ODS</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(2)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se profundiza en los fundamentos histórico-conceptuales de la salud ambiental. Desde Jason Moore y la noción del Capitaloceno, se analiza cómo el modelo extractivista produce "zonas de sacrificio" y enfermedad. Se revisan los impactos del cambio climático en los territorios del Sur Global, vinculando la Agenda 2030 con sus límites estructurales.</p>
+          <div class="tags-row"><span class="tag t1">Salud Ambiental</span><span class="tag t1">Capitaloceno</span><span class="tag t1">Zonas de Sacrificio</span><span class="tag t1">Cambio Climático</span></div>
+        </div></div>
+      </div>
+
+      <div class="session-card" id="sess-3" onclick="toggleSess(this,3)">
+        <div class="sess-header">
+          <div class="sess-num sn1"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>03</div>
+          <div class="sess-meta">
+            <h4>Determinación Social de la Salud</h4>
+            <span class="sess-sub">Breilh · Procesos críticos · Tres dominios · <strong>Hito Fase 1</strong></span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(3)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Los estudiantes aprenden a diferenciar los Determinantes Sociales de la Salud (OMS/CDSS) de la Determinación Social latinoamericana (Breilh, Laurell). Se introduce el análisis de los "procesos críticos" y los tres dominios del modelo (general, particular, singular) aplicados a un conflicto socio-ambiental concreto del territorio elegido.</p>
+          <div class="tags-row"><span class="tag t1">Jaime Breilh</span><span class="tag t1">Determinación Social</span><span class="tag t1">Procesos Críticos</span><span class="tag t1">Epidemiología Crítica</span></div>
+          <div class="milestone ms-gold">🎯 <span><strong>HITO — Entrega Fase 1:</strong> Diagnóstico Territorial con cartografía social o árbol de problemas, fotografías y entrevistas a actores clave.</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- UNIDAD 2 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub2">Unidad 2</span>
+        <span class="unit-title">Análisis de Realidades Contextuales: Salud y Ambiente</span>
+        <div class="unit-progress" id="up-2">
+          <span id="up-2-txt">0/2</span>
+          <div class="unit-bar"><div class="unit-bar-fill fill-gold" id="ub-fill-2" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="session-card" id="sess-4" onclick="toggleSess(this,4)">
+        <div class="sess-header">
+          <div class="sess-num sn2"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>04</div>
+          <div class="sess-meta">
+            <h4>Problemas Ambientales, Contextos Territoriales y Salud</h4>
+            <span class="sess-sub">Ecología política · Conflictos socioambientales · Mapeo crítico</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(4)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se analizan los problemas ambientales y de salud desde la ecología política (Svampa, Gligo, CEPAL). Los estudiantes mapean conflictos socioambientales en su territorio, relacionando las condiciones del contexto (agua, suelo, aire, biodiversidad) con los perfiles de salud-enfermedad de las comunidades afectadas.</p>
+          <div class="tags-row"><span class="tag t2">Problemas Ambientales</span><span class="tag t2">Ecología Política</span><span class="tag t2">Conflictos Socioambientales</span><span class="tag t2">Mapeo Crítico</span></div>
+        </div></div>
+      </div>
+
+      <div class="session-card" id="sess-5" onclick="toggleSess(this,5)">
+        <div class="sess-header">
+          <div class="sess-num sn2"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>05</div>
+          <div class="sess-meta">
+            <h4>Política y Legislación en Salud Ambiental</h4>
+            <span class="sess-sub">CONPES 3550 · Normativa colombiana · Alternativas al desarrollo</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(5)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se revisan los marcos normativos en salud ambiental (CONPES 3550, OPS, OMS, PNUMA) y sus limitaciones frente a las realidades territoriales. Desde Arturo Escobar y las "alternativas al desarrollo", se discuten propuestas que trascienden la visión institucional para construir respuestas genuinamente arraigadas en los territorios.</p>
+          <div class="tags-row"><span class="tag t2">Política Pública</span><span class="tag t2">Legislación Ambiental</span><span class="tag t2">CONPES 3550</span><span class="tag t2">Alternativas al Desarrollo</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- UNIDAD 3 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub3">Unidad 3</span>
+        <span class="unit-title">Los Procesos de Salud-Enfermedad desde la Cultura</span>
+        <div class="unit-progress" id="up-3">
+          <span id="up-3-txt">0/2</span>
+          <div class="unit-bar"><div class="unit-bar-fill fill-plum" id="ub-fill-3" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="session-card" id="sess-6" onclick="toggleSess(this,6)">
+        <div class="sess-header">
+          <div class="sess-num sn3"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>06</div>
+          <div class="sess-meta">
+            <h4>Cultura, Ontologías Políticas y Pluriverso de la Salud</h4>
+            <span class="sess-sub">¿Qué es cultura? · Escobar · Buen Vivir · <strong>Hito Fase 2</strong></span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(6)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se revisan los fundamentos antropológicos del concepto de cultura y sus alcances en la comprensión de la salud. Desde Arturo Escobar (<em>Sentipensar con la tierra</em>, <em>Designs for the Pluriverse</em>) y Alberto Acosta (Buen Vivir), los estudiantes exploran cómo las cosmovisiones indígenas y campesinas producen saberes de salud alternativos, cuestionando el universalismo biomédico.</p>
+          <div class="tags-row"><span class="tag t3">Concepto de Cultura</span><span class="tag t3">Ontologías Políticas</span><span class="tag t3">Pluriverso</span><span class="tag t3">Buen Vivir</span></div>
+          <div class="milestone ms-gold">🎯 <span><strong>HITO — Entrega Fase 2:</strong> Propuesta de Acción con objetivos de transformación territorial, elaborada o co-construida con la comunidad.</span></div>
+        </div></div>
+      </div>
+
+      <div class="session-card" id="sess-7" onclick="toggleSess(this,7)">
+        <div class="sess-header">
+          <div class="sess-num sn3"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>07</div>
+          <div class="sess-meta">
+            <h4>Procesos Culturales de Salud, Enfermedad y Atención</h4>
+            <span class="sess-sub">Saberes populares · Autoatención · Crítica al modelo hegemónico</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(7)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se analizan los itinerarios terapéuticos y los procesos culturales de salud-enfermedad-atención desde Eduardo Menéndez (autoatención, modelos de atención). Los estudiantes valoran los saberes populares como forma de resistencia cultural y reconocen los límites del modelo médico hegemónico en territorios pluriculturales.</p>
+          <div class="tags-row"><span class="tag t3">Saberes Populares</span><span class="tag t3">Autoatención</span><span class="tag t3">Itinerarios Terapéuticos</span><span class="tag t3">Resistencia Cultural</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- UNIDAD 4 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub4">Unidad 4</span>
+        <span class="unit-title">Cultura y Sistemas de Salud</span>
+        <div class="unit-progress" id="up-4">
+          <span id="up-4-txt">0/2</span>
+          <div class="unit-bar"><div class="unit-bar-fill fill-coral" id="ub-fill-4" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="session-card" id="sess-8" onclick="toggleSess(this,8)">
+        <div class="sess-header">
+          <div class="sess-num sn4"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>08</div>
+          <div class="sess-meta">
+            <h4>Interculturalidad Crítica, Mediación y Competencia Cultural</h4>
+            <span class="sess-sub">Diálogo de saberes · Modelos alternativos · Política intercultural</span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(8)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se examinan las nociones de diálogo de saberes, mediación cultural y competencia cultural en salud pública (Walsh, De Sousa Santos). Se revisan los modelos alternativos de atención (salud propia, sistemas médicos indígenas) y se analizan las políticas en salud intercultural en Colombia y América Latina.</p>
+          <div class="tags-row"><span class="tag t4">Interculturalidad Crítica</span><span class="tag t4">Diálogo de Saberes</span><span class="tag t4">Modelos Alternativos</span><span class="tag t4">Política Intercultural</span></div>
+        </div></div>
+      </div>
+
+      <div class="session-card" id="sess-9" onclick="toggleSess(this,9)">
+        <div class="sess-header">
+          <div class="sess-num sn4"><div class="done-overlay"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>09</div>
+          <div class="sess-meta">
+            <h4>Comunicación para la Transformación y Cierre Pedagógico</h4>
+            <span class="sess-sub">Producción audiovisual · Decolonización del saber · Plenaria · <strong>Hito Fase 3</strong></span>
+          </div>
+          <div class="sess-actions" onclick="event.stopPropagation()">
+            <button class="check-btn" onclick="toggleDone(9)" title="Marcar como vista">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+          <svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div class="sess-body"><div class="sess-body-inner">
+          <p class="sess-focus"><strong>Eje temático:</strong> Se trabajan las herramientas de comunicación crítica: ética de la imagen, narrativa territorial y producción audiovisual (Nichols, Fals Borda). Los equipos presentan sus videos ante el grupo y realizan reflexión colectiva sobre decolonización del saber e impacto territorial de sus intervenciones.</p>
+          <div class="tags-row"><span class="tag t4">Comunicación Crítica</span><span class="tag t4">Producción Audiovisual</span><span class="tag t4">Decolonización</span><span class="tag t4">Plenaria Final</span></div>
+          <div class="milestone ms-teal">🎬 <span><strong>CIERRE — Entrega Fase 3:</strong> Video 5-6 min con proceso completo, reflexión decolonial y propuesta aplicada. Socialización y retroalimentación colectiva.</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <p>"Esta guía invita a los salubristas a asumir el territorio como punto de partida ético y epistémico, y la comunidad como interlocutora fundamental en la construcción de una salud pública transformadora."</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       TAB: LÍNEA DE TIEMPO
+  ══════════════════════════════════ -->
+  <div id="pane-timeline" class="tab-pane">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <h2>Línea de Tiempo del Semestre</h2>
+        <p>Vista visual de las 9 sesiones y su relación con el proyecto integrador</p>
+      </div>
+    </div>
+    <div class="timeline-intro">
+      Cada celda corresponde a una sesión. El color del borde indica la <strong>fase del proyecto</strong> a la que pertenece. Las sesiones marcadas como vistas aparecen sombreadas con ✓.
+    </div>
+
+    <div class="tl-grid" id="tl-grid">
+      <!-- JS renders these -->
+    </div>
+
+    <div class="tl-phase-summary">
+      <div class="tl-phase-box pb1">
+        <span class="tl-phase-pct pct-jade">30%</span>
+        <div class="tl-phase-name">Fase 1</div>
+        <div class="tl-phase-desc">Diagnóstico Territorial</div>
+        <div class="tl-phase-sess">Sesiones 1 · 2 · 3</div>
+      </div>
+      <div class="tl-phase-box pb2">
+        <span class="tl-phase-pct pct-gold">30%</span>
+        <div class="tl-phase-name">Fase 2</div>
+        <div class="tl-phase-desc">Propuesta de Acción</div>
+        <div class="tl-phase-sess">Sesiones 4 · 5 · 6</div>
+      </div>
+      <div class="tl-phase-box pb3">
+        <span class="tl-phase-pct pct-plum">40%</span>
+        <div class="tl-phase-name">Fase 3</div>
+        <div class="tl-phase-desc">Video y Reflexión Decolonial</div>
+        <div class="tl-phase-sess">Sesiones 7 · 8 · 9</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       TAB: PROYECTO
+  ══════════════════════════════════ -->
+  <div id="pane-proyecto" class="tab-pane">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <h2>Proyecto Integrador</h2>
+        <p style="font-family:var(--ff-display);font-style:italic;color:var(--tx2);">"La Acción Territorial de un Salubrista"</p>
+      </div>
+    </div>
+    <div class="proj-intro">
+      Tres fases acumulativas durante las 9 sesiones. El resultado final es una <strong>pieza audiovisual</strong> que documenta una solución de salud pública con enfoque territorial, crítico e intercultural.
+    </div>
+    <div class="phases-stack">
+
+      <div class="phase-card pc1">
+        <div class="phase-top">
+          <div class="phase-badge-row">
+            <span class="phase-tag pt1">Fase 1 · Sesiones 1-3</span>
+            <span class="phase-sess" style="font-size:.7rem;color:var(--tx3)">Entrega en Sesión 3</span>
+          </div>
+          <span class="phase-pct ppct1">30%</span>
+        </div>
+        <div class="phase-body">
+          <h3>Diagnóstico Territorial</h3>
+          <div class="phase-items">
+            <div class="phase-item"><span class="pi-icon">📍</span><p><strong>Selección:</strong> Colectivo afectado por conflicto socio-ambiental y cultural concreto.</p></div>
+            <div class="phase-item"><span class="pi-icon">📊</span><p><strong>Marco:</strong> Determinación Social (Breilh) o Determinantes Sociales (OMS), justificando la elección.</p></div>
+            <div class="phase-item"><span class="pi-icon">🗺️</span><p><strong>Herramientas:</strong> Cartografía social o árbol de problemas para visibilizar los conflictos territoriales.</p></div>
+            <div class="phase-item"><span class="pi-icon">🎤</span><p><strong>Campo:</strong> Mínimo dos entrevistas en profundidad con actores clave del territorio.</p></div>
+          </div>
+          <div class="delivery"><div class="dlabel">📦 Entrega · Sesión 3</div>Documento con análisis territorial, evidencia fotográfica y resumen de entrevistas.</div>
+        </div>
+      </div>
+
+      <div class="phase-card pc2">
+        <div class="phase-top">
+          <div class="phase-badge-row">
+            <span class="phase-tag pt2">Fase 2 · Sesiones 4-6</span>
+            <span class="phase-sess" style="font-size:.7rem;color:var(--tx3)">Entrega en Sesión 6</span>
+          </div>
+          <span class="phase-pct ppct2">30%</span>
+        </div>
+        <div class="phase-body">
+          <h3>Propuesta de Acción</h3>
+          <div class="phase-items">
+            <div class="phase-item"><span class="pi-icon">💡</span><p><strong>Diseño:</strong> Propuesta técnico-social articulada a las realidades del territorio y sus saberes.</p></div>
+            <div class="phase-item"><span class="pi-icon">🌍</span><p><strong>Enfoque:</strong> Pluriverso, Buen Vivir, movilización social o estrategias propias del territorio.</p></div>
+            <div class="phase-item"><span class="pi-icon">🎯</span><p><strong>Objetivos:</strong> Claros, medibles, alcanzables; idealmente co-diseñados con la comunidad.</p></div>
+            <div class="phase-item"><span class="pi-icon">🔗</span><p><strong>Articulación:</strong> Responde explícitamente al diagnóstico de la Fase 1.</p></div>
+          </div>
+          <div class="delivery"><div class="dlabel">📦 Entrega · Sesión 6</div>Propuesta de acción con objetivos de transformación territorial, co-construida con el territorio.</div>
+        </div>
+      </div>
+
+      <div class="phase-card pc3">
+        <div class="phase-top">
+          <div class="phase-badge-row">
+            <span class="phase-tag pt3">Fase 3 · Sesiones 7-9</span>
+            <span class="phase-sess" style="font-size:.7rem;color:var(--tx3)">Entrega en Sesión 9</span>
+          </div>
+          <span class="phase-pct ppct3">40%</span>
+        </div>
+        <div class="phase-body">
+          <h3>Video y Reflexión Decolonial</h3>
+          <div class="phase-items">
+            <div class="phase-item"><span class="pi-icon">🎬</span><p><strong>Video:</strong> 5-6 minutos que sintetice el proceso completo con narrativa territorial.</p></div>
+            <div class="phase-item"><span class="pi-icon">🗣️</span><p><strong>Testimonios:</strong> Voces, narrativas e imágenes del territorio y sus protagonistas.</p></div>
+            <div class="phase-item"><span class="pi-icon">✨</span><p><strong>Reflexión:</strong> Análisis crítico sobre decolonización del saber y ética de la imagen.</p></div>
+            <div class="phase-item"><span class="pi-icon">🏛️</span><p><strong>Plenaria:</strong> Presentación con retroalimentación colectiva y cierre pedagógico.</p></div>
+          </div>
+          <div class="delivery"><div class="dlabel">📦 Entrega · Sesión 9</div>Video 5-6 min, reflexión sobre decolonización del saber e inclusión de la propuesta aplicada.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="weight-bar-wrap">
+      <h4>Distribución de ponderación</h4>
+      <div class="wrow"><span class="wdot" style="background:var(--jade)"></span>Fase 1 – Diagnóstico Territorial<span style="margin-left:auto;color:var(--jade);font-weight:700">30%</span></div>
+      <div class="wrow"><span class="wdot" style="background:var(--gold)"></span>Fase 2 – Propuesta de Acción<span style="margin-left:auto;color:var(--gold);font-weight:700">30%</span></div>
+      <div class="wrow"><span class="wdot" style="background:var(--plum)"></span>Fase 3 – Video y Reflexión<span style="margin-left:auto;color:var(--plum);font-weight:700">40%</span></div>
+      <div class="wbar">
+        <div class="wseg" style="width:30%;background:var(--jade)"></div>
+        <div class="wseg" style="width:30%;background:var(--gold)"></div>
+        <div class="wseg" style="width:40%;background:var(--plum)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       TAB: RÚBRICAS
+  ══════════════════════════════════ -->
+  <div id="pane-rubricas" class="tab-pane">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <h2>Rúbricas de Evaluación</h2>
+        <p>Ingresa calificaciones de 0.0 a 5.0 en cada criterio para calcular la nota</p>
+      </div>
+    </div>
+
+    <div class="rubric-nav">
+      <button class="rub-btn ar1" onclick="showRubric('r1',this)">Fase 1 &nbsp;·&nbsp; 30%</button>
+      <button class="rub-btn" onclick="showRubric('r2',this)">Fase 2 &nbsp;·&nbsp; 30%</button>
+      <button class="rub-btn" onclick="showRubric('r3',this)">Fase 3 &nbsp;·&nbsp; 40%</button>
+    </div>
+
+    <!-- R1 -->
+    <div id="rubric-r1" class="card rubric-panel open" style="border-radius:var(--r-lg);border:1px solid var(--border)">
+      <div class="rp-header"><div class="rp-icon ri1">1</div><h3>Diagnóstico Territorial</h3></div>
+      <div class="rp-body">
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Identificación del colectivo <small>(20%)</small></span><input type="number" class="rub-input" id="r1c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')"></div><p class="rub-desc">Claridad en la selección del grupo social y su relación con el conflicto socio-ambiental.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Marco analítico <small>(25%)</small></span><input type="number" class="rub-input" id="r1c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')"></div><p class="rub-desc">Uso correcto de Determinación Social o Determinantes Sociales como marco explicativo del problema.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Herramientas y evidencia <small>(25%)</small></span><input type="number" class="rub-input" id="r1c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')"></div><p class="rub-desc">Cartografía social o árbol de problemas. Calidad de fotografías y entrevistas con actores clave.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Análisis crítico <small>(30%)</small></span><input type="number" class="rub-input" id="r1c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')"></div><p class="rub-desc">Conexión clara entre sistemas económicos, ambiente y perfil de salud del grupo estudiado.</p></div>
+        <div class="rub-total"><div class="rub-total-label">Calificación Fase 1</div><div class="rub-total-val" id="r1-total">0.00</div></div>
+      </div>
+    </div>
+
+    <!-- R2 -->
+    <div id="rubric-r2" class="card rubric-panel" style="border-radius:var(--r-lg);border:1px solid var(--border)">
+      <div class="rp-header"><div class="rp-icon ri2">2</div><h3>Propuesta de Acción</h3></div>
+      <div class="rp-body">
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Fundamentación teórica <small>(25%)</small></span><input type="number" class="rub-input" id="r2c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Integración coherente de marcos alternativos (pluriverso, Buen Vivir, movilización social).</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Objetivos definidos <small>(25%)</small></span><input type="number" class="rub-input" id="r2c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Objetivos claros, medibles y alcanzables; idealmente co-diseñados con la comunidad.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Viabilidad de la propuesta <small>(25%)</small></span><input type="number" class="rub-input" id="r2c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Factibilidad técnica, social y comunitaria del plan de acción propuesto.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Coherencia con Fase 1 <small>(25%)</small></span><input type="number" class="rub-input" id="r2c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Articulación lógica y explícita entre el diagnóstico territorial y la propuesta de solución.</p></div>
+        <div class="rub-total"><div class="rub-total-label">Calificación Fase 2</div><div class="rub-total-val" id="r2-total">0.00</div></div>
+      </div>
+    </div>
+
+    <!-- R3 -->
+    <div id="rubric-r3" class="card rubric-panel" style="border-radius:var(--r-lg);border:1px solid var(--border)">
+      <div class="rp-header"><div class="rp-icon ri3">3</div><h3>Video y Reflexión Decolonial</h3></div>
+      <div class="rp-body">
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Calidad narrativa <small>(20%)</small></span><input type="number" class="rub-input" id="r3c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Coherencia y fuerza narrativa del proceso: del problema identificado a la solución propuesta.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Integración de testimonios <small>(20%)</small></span><input type="number" class="rub-input" id="r3c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Inclusión significativa y ética de voces del territorio y actores clave comunitarios.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Reflexión decolonial <small>(25%)</small></span><input type="number" class="rub-input" id="r3c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Profundidad del análisis crítico sobre decolonización del saber y ética de la imagen.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Propuesta aplicada <small>(15%)</small></span><input type="number" class="rub-input" id="r3c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Claridad en cómo se aplicó la propuesta al problema social identificado.</p></div>
+        <div class="rub-row"><div class="rub-row-top"><span class="rub-label">Producción técnica <small>(20%)</small></span><input type="number" class="rub-input" id="r3c5" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Calidad de imagen, audio y edición. Cumplimiento de duración (5 a 6 minutos).</p></div>
+        <div class="rub-total"><div class="rub-total-label">Calificación Fase 3</div><div class="rub-total-val" id="r3-total">0.00</div></div>
+      </div>
+    </div>
+
+    <!-- FINAL GRADE CALC -->
+    <div class="calc-card">
+      <h4>🎓 Calculadora de Nota Final del Curso</h4>
+      <div class="calc-rows">
+        <div class="calc-row">
+          <span class="cr-label">Fase 1 – Diagnóstico Territorial</span>
+          <span class="cr-weight">× 30%</span>
+          <span class="calc-row-result" id="cf1" style="color:var(--jade)">0.00</span>
+        </div>
+        <div class="calc-row">
+          <span class="cr-label">Fase 2 – Propuesta de Acción</span>
+          <span class="cr-weight">× 30%</span>
+          <span class="calc-row-result" id="cf2" style="color:var(--gold)">0.00</span>
+        </div>
+        <div class="calc-row">
+          <span class="cr-label">Fase 3 – Video y Reflexión</span>
+          <span class="cr-weight">× 40%</span>
+          <span class="calc-row-result" id="cf3" style="color:var(--plum)">0.00</span>
+        </div>
+      </div>
+      <div class="calc-final">
+        <div>
+          <div class="calc-final-label">Nota Final del Curso</div>
+          <div class="calc-grade-lbl" id="calc-lbl">—</div>
+        </div>
+        <div class="calc-final-val" id="calc-final">0.00</div>
+      </div>
+    </div>
+
+    <div class="escala">
+      <div class="esc-item er"><div class="esc-val">0–2.9</div><div class="esc-lbl">No aprobado</div></div>
+      <div class="esc-item eo"><div class="esc-val">3.0–3.4</div><div class="esc-lbl">Suficiente</div></div>
+      <div class="esc-item ey"><div class="esc-val">3.5–3.9</div><div class="esc-lbl">Bueno</div></div>
+      <div class="esc-item eg"><div class="esc-val">4.0–4.5</div><div class="esc-lbl">Muy bueno</div></div>
+      <div class="esc-item ec"><div class="esc-val">4.6–5.0</div><div class="esc-lbl">Excelente</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       TAB: BIBLIOGRAFÍA
+  ══════════════════════════════════ -->
+  <div id="pane-bibliografia" class="tab-pane">
+    <div class="sec-head">
+      <div class="sec-head-left">
+        <h2>Bibliografía</h2>
+        <p>Referencias fundamentales organizadas por eje temático</p>
+      </div>
+    </div>
+
+    <div class="drive-card">
+      <h3>📖 Lecturas Centrales de la Asignatura</h3>
+      <p>Accede a la carpeta compartida en Google Drive con los textos completos para cada módulo y sesión.</p>
+      <span class="drive-url" id="drive-url-el">https://drive.google.com/drive/folders/1aY2-Gzt5bwon8uYLPxsqg1n-Ecnn7FsW?usp=sharing</span>
+      <button class="copy-btn" onclick="copyDrive()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        Copiar enlace
+      </button>
+    </div>
+
+    <div id="bib-list">
+      <!-- JS renders bib categories -->
+    </div>
+
+    <div class="quote-card" style="margin-top:1.5rem">
+      <p>Se recomienda explorar las obras completas de <strong style="color:var(--jade);font-style:normal">Jaime Breilh</strong>, <strong style="color:var(--gold);font-style:normal">Arturo Escobar</strong>, <strong style="color:var(--plum);font-style:normal">Eduardo Menéndez</strong> y <strong style="color:var(--coral);font-style:normal">Jason Moore</strong> como ejes teóricos centrales.</p>
+    </div>
+  </div>
+
+  </main>
+</div><!-- /page-body -->
+
+<footer>
+  <p>© 2026 &nbsp;<span>Maestría en Salud Pública · Areandina</span>&nbsp; · &nbsp;Profundización en Cultura, Ambiente y Sociedad &nbsp;·&nbsp; Semestre 4</p>
+</footer>
+</div><!-- /shell -->
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════ -->
+<script>
+/* ── STATE ── */
+const TOTAL_SESSIONS = 9;
+const SESSION_UNIT = {1:1,2:1,3:1,4:2,5:2,6:3,7:3,8:4,9:4};
+const UNIT_SIZES   = {1:3,2:2,3:2,4:2};
+
+let done = JSON.parse(localStorage.getItem('cas_done') || '{}');
+
+/* ── RUBRIC WEIGHTS ── */
+const RW = {
+  r1:[.20,.25,.25,.30],
+  r2:[.25,.25,.25,.25],
+  r3:[.20,.20,.25,.15,.20]
+};
+let rubricTotals = {r1:0,r2:0,r3:0};
+
+/* ══════════════════════
+   TAB NAVIGATION
+══════════════════════ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'timeline') renderTimeline();
+}
+
+/* ══════════════════════
+   SESSION ACCORDION
+══════════════════════ */
+function toggleSess(card, num) {
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open', !isOpen);
+}
+
+function goToSession(num) {
+  // Switch to sesiones tab
+  const btn = document.querySelector('[data-tab="sesiones"]');
+  showTab('sesiones', btn);
+  setTimeout(() => {
+    const card = document.getElementById('sess-'+num);
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    if (!card.classList.contains('open')) toggleSess(card, num);
+    // Highlight sidebar link
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-link'));
+    document.getElementById('sl-'+num)?.classList.add('active-link');
+  }, 80);
+}
+
+/* ══════════════════════
+   PROGRESS TRACKING
+══════════════════════ */
+function toggleDone(num) {
+  done[num] = !done[num];
+  localStorage.setItem('cas_done', JSON.stringify(done));
+  updateDoneUI();
+}
+
+function updateDoneUI() {
+  let total = 0;
+  for (let i = 1; i <= TOTAL_SESSIONS; i++) {
+    const card = document.getElementById('sess-'+i);
+    const sc   = document.getElementById('sc-'+i);
+    if (card) card.classList.toggle('done', !!done[i]);
+    if (sc)   sc.style.display = done[i] ? 'block' : 'none';
+    if (done[i]) total++;
+  }
+
+  // Ring
+  const pct = Math.round((total/TOTAL_SESSIONS)*100);
+  const circ = 188; // 2*π*r ≈ 2*3.14159*30
+  const offset = circ - (circ * pct / 100);
+  document.getElementById('prog-ring-fill').style.strokeDashoffset = offset;
+  document.getElementById('prog-pct').textContent = pct+'%';
+
+  // Unit bars
+  for (const [unit, size] of Object.entries(UNIT_SIZES)) {
+    let cnt = 0;
+    for (let i=1;i<=TOTAL_SESSIONS;i++) { if(SESSION_UNIT[i]==unit && done[i]) cnt++; }
+    const fill = document.getElementById('ub-fill-'+unit);
+    const txt  = document.getElementById('up-'+unit+'-txt');
+    if (fill) fill.style.width = (cnt/size*100)+'%';
+    if (txt)  txt.textContent = cnt+'/'+size;
+  }
+
+  renderTimeline();
+}
+
+/* ══════════════════════
+   TIMELINE RENDER
+══════════════════════ */
+const TL_DATA = [
+  {n:1,unit:'Unidad 1',ub:'b1',title:'Apertura Territorial',phase:1},
+  {n:2,unit:'Unidad 1',ub:'b1',title:'Salud Ambiental',phase:1},
+  {n:3,unit:'Unidad 1',ub:'b1',title:'Determinación Social',phase:1},
+  {n:4,unit:'Unidad 2',ub:'b2',title:'Problemas Ambientales',phase:2},
+  {n:5,unit:'Unidad 2',ub:'b2',title:'Política Ambiental',phase:2},
+  {n:6,unit:'Unidad 3',ub:'b3',title:'Cultura · Pluriverso',phase:2},
+  {n:7,unit:'Unidad 3',ub:'b3',title:'Saberes Populares',phase:3},
+  {n:8,unit:'Unidad 4',ub:'b4',title:'Interculturalidad',phase:3},
+  {n:9,unit:'Unidad 4',ub:'b4',title:'Comunicación · Cierre',phase:3},
+];
+const PHASE_LABELS = {1:'Fase 1',2:'Fase 2',3:'Fase 3'};
+const PHASE_CLASSES = {1:'f1 tp1',2:'f2 tp2',3:'f3 tp3'};
+
+function renderTimeline() {
+  const grid = document.getElementById('tl-grid');
+  if (!grid) return;
+  grid.innerHTML = TL_DATA.map(s => {
+    const isDone = !!done[s.n];
+    const [fc, tc] = PHASE_CLASSES[s.phase].split(' ');
+    return `<div class="tl-cell ${fc}${isDone?' done-cell':''}" onclick="goToSession(${s.n})" style="cursor:pointer">
+      <div class="tl-num">${String(s.n).padStart(2,'0')}</div>
+      <div class="tl-badge ${s.ub}">${s.unit}</div>
+      <div class="tl-title">${s.title}</div>
+      <span class="tl-phase-tag ${tc}">${PHASE_LABELS[s.phase]}</span>
+      <div class="tl-done-stamp"><svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg> Vista</div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════
+   RUBRIC CALC
+══════════════════════ */
+function calcRubric(panel) {
+  const weights = RW[panel];
+  let total = 0;
+  weights.forEach((w,i) => {
+    const v = parseFloat(document.getElementById(panel+'c'+(i+1)).value)||0;
+    total += Math.min(5,Math.max(0,v)) * w;
+  });
+  rubricTotals[panel] = total;
+  document.getElementById(panel+'-total').textContent = total.toFixed(2);
+  updateFinalCalc();
+}
+
+function updateFinalCalc() {
+  const f1 = rubricTotals.r1 * 0.30;
+  const f2 = rubricTotals.r2 * 0.30;
+  const f3 = rubricTotals.r3 * 0.40;
+  const final = f1 + f2 + f3;
+
+  document.getElementById('cf1').textContent = f1.toFixed(2);
+  document.getElementById('cf2').textContent = f2.toFixed(2);
+  document.getElementById('cf3').textContent = f3.toFixed(2);
+  document.getElementById('calc-final').textContent = final.toFixed(2);
+
+  const labels = [[0,'No aprobado'],[3,'Suficiente'],[3.5,'Bueno'],[4,'Muy bueno'],[4.6,'Excelente']];
+  let lbl = '—';
+  for (const [min, l] of labels) { if (final >= min) lbl = l; }
+  document.getElementById('calc-lbl').textContent = lbl;
+}
+
+/* ══════════════════════
+   RUBRIC PANEL NAV
+══════════════════════ */
+function showRubric(id, btn) {
+  document.querySelectorAll('.rubric-panel').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.rub-btn').forEach(b=>b.classList.remove('ar1','ar2','ar3'));
+  document.getElementById('rubric-'+id).classList.add('open');
+  btn.classList.add('a'+id);
+}
+
+/* ══════════════════════
+   BIB CATEGORIES (data-driven)
+══════════════════════ */
+const BIB = [
+  {icon:'🌍',bg:'rgba(62,207,142,.12)',color:'var(--jade)',title:'Salud Global Crítica',sub:'Política, poder y salud pública global',entries:[
+    'Diaconu, K. et al. (2020). <em>Understanding fragility: implications for global health research and practice.</em> Health Policy and Planning, 35(2), 235–243.<div class="bib-doi">https://doi.org/10.1093/heapol/czz142</div>',
+    'Benatar, S. (2016). <em>Politics, Power, Poverty and Global Health: Systems and Frames.</em> International Journal of Health Policy and Management, 5(10), 599–604.',
+    'Ventura, D. & Bueno, F. (2021). <em>De líder a paria de la salud global: Brasil como laboratorio del "neoliberalismo epidemiológico" ante la Covid-19.</em> Foro Internacional, 61(2), 427–467.',
+    'Arrizabalaga, J. (2021). <em>El desafío de las enfermedades (re)emergentes, los límites de la respuesta biomédica y el nuevo paradigma de salud global.</em> História, Ciências, Saúde-Manguinhos, 28(1).',
+  ]},
+  {icon:'🔬',bg:'rgba(240,192,96,.12)',color:'var(--gold)',title:'Determinación Social de la Salud',sub:'Teoría crítica latinoamericana',entries:[
+    'Breilh, J. (2013). <em>La determinación social de la salud como herramienta de transformación hacia una nueva salud pública.</em> Rev. Facultad Nacional de Salud Pública, 31(supl 1), S13–S27.',
+    'Breilh, J. (2010). <em>Epidemiología crítica: Ciencia emancipadora e interculturalidad.</em> Buenos Aires: Lugar Editorial.',
+    'Laurell, A. C. (1982). <em>La salud-enfermedad como proceso social.</em> Revista Latinoamericana de Salud, 2(1), 7–25.',
+  ]},
+  {icon:'🌱',bg:'rgba(184,154,240,.12)',color:'var(--plum)',title:'Alternativas al Desarrollo · Pluriverso',sub:'Arturo Escobar, Buen Vivir, Pensamiento Decolonial',entries:[
+    'Escobar, A. (2005). <em>Una Ecología de la Diferencia.</em> En: Más Allá del Tercer Mundo. Universidad del Cauca. (Pág. 125–157)',
+    'Escobar, A. (2014). <em>Sentipensar con la tierra: Nuevas lecturas sobre desarrollo, territorio y diferencia.</em> Medellín: Ediciones UNAULA.',
+    'Escobar, A. (2014). <em>Territorios de diferencia: la ontología política de los "derechos al territorio".</em> En: Sentipensar con la tierra. (Pág. 67–123)',
+    'Escobar, A. (2018). <em>Designs for the Pluriverse: Radical Interdependence, Autonomy, and the Making of Worlds.</em> Duke University Press.',
+    'Acosta, A. (2013). <em>El Buen Vivir: Sumak Kawsay, una oportunidad para imaginar otros mundos.</em> Barcelona: Icaria Editorial.',
+  ]},
+  {icon:'⚠️',bg:'rgba(240,120,120,.12)',color:'var(--coral)',title:'Capitaloceno y Crisis Ambiental',sub:'Ecología política, extractivismo y Antropoceno',entries:[
+    'Moore, J. W. (2014). <em>The End of Cheap Nature, or, How I learned to Stop Worrying about \'the\' Environment and Love the Crisis of Capitalism.</em> Structures of the world political economy, 285–314.',
+    'Moore, J. W. (2015). <em>Capitalism in the Web of Life: Ecology and the Accumulation of Capital.</em> London: Verso Books.',
+    'Steffen, W. et al. (2018). <em>Trajectories of the Earth System in the Anthropocene.</em> PNAS, 115(33), 8252–8259.',
+    'Svampa, M. (2019). <em>Las fronteras del neoextractivismo en América Latina.</em> Bielefeld: Bielefeld University Press.',
+    'Gligo, N. et al. (2020). <em>La tragedia ambiental de América Latina y el Caribe.</em> CEPAL.',
+    'Haraway, D. (2016). <em>Staying with the Trouble: Making Kin in the Chthulucene.</em> Duke University Press.',
+  ]},
+  {icon:'🌿',bg:'rgba(56,224,200,.10)',color:'var(--teal)',title:'Salud Ambiental',sub:'Política, legislación y enfoques territoriales',entries:[
+    'OMS. (2018). <em>Cambio climático y salud.</em><div class="bib-doi">https://www.who.int/es/news-room/fact-sheets/detail/climate-change-and-health</div>',
+    'DPN. (2008). <em>CONPES 3550. Lineamientos para la formulación de la política integral de salud ambiental.</em> Colombia.',
+    'Gomez, J. (2019). <em>Retrato actual de la dimensión de salud ambiental en Colombia.</em> Interdisciplinary Journal of Epidemiology and Public Health, 2(2).',
+    'Blanco-Becerra, L. C. et al. (2015). <em>Estudios ecológicos en salud ambiental: más allá de la epidemiología.</em> Biomédica, 35(SPE), 191–206.',
+    'ONU. (2015). <em>Transformar nuestro mundo: la Agenda 2030 para el Desarrollo Sostenible.</em>',
+  ]},
+  {icon:'🗣️',bg:'rgba(240,120,120,.10)',color:'var(--coral)',title:'Saberes Populares e Interculturalidad',sub:'Autoatención, mediación cultural y sistemas curativos',entries:[
+    'Menéndez, E. L. (2003). <em>Modelos de atención de los padecimientos: de exclusiones teóricas y articulaciones prácticas.</em> Ciência & Saúde Coletiva, 8(1), 185–207.',
+    'Walsh, C. (2009). <em>Interculturalidad crítica y educación intercultural.</em> En: Construyendo Interculturalidad Crítica. La Paz: III-CAB.',
+    'De Sousa Santos, B. (2010). <em>Descolonizar el saber, reinventar el poder.</em> Montevideo: Ediciones Trilce.',
+    'Castillo, L. O., & López-Díaz, L. (2019). <em>Competencia cultural de enfermeras en salud pública con población indígena.</em> Avances en Enfermería, 37(1), 9–18.',
+    'Holmes, S., & Bourgois, P. (2013). <em>"Doctors Don\'t Know Anything".</em> In Fresh Fruit, Broken Bodies. University of California Press.',
+  ]},
+  {icon:'📐',bg:'rgba(99,102,241,.10)',color:'#818cf8',title:'Metodología y Antropología Médica',sub:'Investigación participativa, cartografía y narrativa',entries:[
+    'Fals Borda, O. (2009). <em>Una sociología sentipensante para América Latina.</em> Buenos Aires: CLACSO.',
+    'Diez Tetamanti, J. M. (2018). <em>Cartografía social: Investigación e intervención desde las ciencias sociales.</em> Buenos Aires: Biblos.',
+    'Nichols, B. (2010). <em>Introduction to Documentary.</em> Bloomington: Indiana University Press.',
+    'Langdon, E., & Wiik, F. (2010). <em>Anthropology, health and illness: an introduction to the concept of culture applied to the health sciences.</em> Rev. Latino-Am. de Enfermagem, 18(3), 459–466.',
+    'Canguilhem, G. (1982). <em>Lo normal y lo patológico.</em> Siglo XXI.',
+  ]},
+];
+
+function renderBib() {
+  const container = document.getElementById('bib-list');
+  container.innerHTML = BIB.map((cat,i) => `
+    <div class="bib-cat" id="bib-cat-${i}">
+      <button class="bib-cat-btn" onclick="toggleBib(${i})">
+        <div class="bib-icon" style="background:${cat.bg};color:${cat.color}">${cat.icon}</div>
+        <div class="bib-info"><h4>${cat.title}</h4><p>${cat.sub}</p></div>
+        <svg class="bib-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div class="bib-list" style="border-left:2px solid ${cat.color}">
+        ${cat.entries.map(e=>`<div class="bib-entry">${e}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleBib(i) {
+  const cat = document.getElementById('bib-cat-'+i);
+  cat.classList.toggle('open');
+}
+
+/* ══════════════════════
+   COPY DRIVE LINK
+══════════════════════ */
+function copyDrive() {
+  const url = document.getElementById('drive-url-el').textContent.trim();
+  navigator.clipboard.writeText(url).then(() => showToast('✓ Enlace copiado'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2300);
+}
+
+/* ══════════════════════
+   INIT
+══════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  updateDoneUI();
+  renderBib();
+  renderTimeline();
+});
+</script>
+</body>
+</html>
