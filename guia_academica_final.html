@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultura, Ambiente y Sociedad | Areandina MSP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — DARK
+═══════════════════════════════════════════════════ */
+:root {
+  --ff-display: 'Lora', Georgia, serif;
+  --ff-body: 'Outfit', system-ui, sans-serif;
+  --r-sm: 6px; --r-md: 12px; --r-lg: 18px; --r-xl: 26px;
+  --nav-h: 60px; --sidebar-w: 228px;
+  --trans: all .22s ease;
+
+  /* Accent palette — same for both themes */
+  --jade:  #2dbd82;
+  --gold:  #d4960a;
+  --plum:  #8b6fe0;
+  --coral: #d95f5f;
+  --sky:   #3aace0;
+  --teal:  #20c4ac;
+
+  /* Jade variants for states */
+  --jade-hi: #3ecf8e;
+  --jade-lo: rgba(45,189,130,.14);
+}
+
+/* ─── DARK THEME ─── */
+[data-theme="dark"] {
+  --bg0:          #07101f;
+  --bg1:          #0c1929;
+  --bg2:          #111f34;
+  --surface:      rgba(255,255,255,.045);
+  --surface-hi:   rgba(255,255,255,.075);
+  --border:       rgba(255,255,255,.08);
+  --border-hi:    rgba(255,255,255,.16);
+
+  --tx1: #edf2f8;          /* WCAG: 14.3:1 on bg0 */
+  --tx2: #97aac0;          /* WCAG: 4.6:1  on bg0 */
+  --tx3: #5a7090;          /* WCAG: 3.1:1  on bg0 — decorative only */
+
+  --header-bg: rgba(7,16,31,.97);
+  --nav-bg:    rgba(7,16,31,.94);
+
+  --orb-jade: rgba(45,189,130,.09);
+  --orb-plum: rgba(139,111,224,.07);
+  --grain-op: .025;
+
+  --shadow-card: 0 2px 12px rgba(0,0,0,.35);
+}
+
+/* ─── LIGHT THEME ─── */
+[data-theme="light"] {
+  --bg0:          #f4f7fb;
+  --bg1:          #edf1f7;
+  --bg2:          #e5eaf3;
+  --surface:      rgba(255,255,255,.80);
+  --surface-hi:   rgba(255,255,255,.95);
+  --border:       rgba(0,0,0,.09);
+  --border-hi:    rgba(0,0,0,.18);
+
+  --tx1: #111827;          /* WCAG: 16:1 on bg0 */
+  --tx2: #374151;          /* WCAG: 9.4:1 on bg0 */
+  --tx3: #6b7280;          /* WCAG: 4.6:1 on bg0 */
+
+  --header-bg: rgba(244,247,251,.97);
+  --nav-bg:    rgba(244,247,251,.94);
+
+  --orb-jade: rgba(45,189,130,.07);
+  --orb-plum: rgba(139,111,224,.05);
+  --grain-op: .015;
+
+  --shadow-card: 0 2px 12px rgba(0,0,0,.08);
+}
+
+/* ─── REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--ff-body);
+  background: var(--bg0);
+  color: var(--tx1);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: background .3s ease, color .3s ease;
+}
+button { font-family: var(--ff-body); cursor: pointer; border: none; background: none; }
+input  { font-family: var(--ff-body); }
+
+/* ═══════════════════════════════════════════════════
+   AMBIENT LAYER
+═══════════════════════════════════════════════════ */
+#ambient {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%; filter: blur(90px);
+  will-change: transform;
+  animation: float-a 22s ease-in-out infinite alternate;
+}
+.orb-1 { width: 55vw; height: 55vw; max-width: 700px; max-height: 700px;
+  top: -15%; left: -10%; background: radial-gradient(circle, var(--orb-jade) 0%, transparent 70%); }
+.orb-2 { width: 45vw; height: 45vw; max-width: 600px; max-height: 600px;
+  bottom: -10%; right: -8%; background: radial-gradient(circle, var(--orb-plum) 0%, transparent 70%);
+  animation-name: float-b; animation-delay: -8s; }
+@keyframes float-a { from{transform:translate(0,0)} to{transform:translate(24px,16px)} }
+@keyframes float-b { from{transform:translate(0,0)} to{transform:translate(-18px,22px)} }
+
+/* grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: var(--grain-op);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 300px;
+  transition: opacity .3s;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(45,189,130,.3); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════════ */
+#shell { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ═══════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════ */
+header {
+  background: var(--header-bg);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: clamp(1.75rem,4vw,3.25rem) clamp(1.25rem,4vw,3.5rem) clamp(1.5rem,3.5vw,2.75rem);
+  position: relative; overflow: hidden;
+  transition: background .3s;
+}
+header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--jade) 30%, var(--sky) 70%, transparent 100%);
+  opacity: .55;
+}
+
+.header-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; gap: 2rem;
+}
+.header-left {}
+.kicker {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-size: .72rem; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--tx3);
+  margin-bottom: 1rem;
+}
+.kicker-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--jade); animation: blink 2.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+h1 {
+  font-family: var(--ff-display);
+  font-size: clamp(1.9rem, 4.5vw, 3.6rem);
+  font-weight: 700; line-height: 1.08; letter-spacing: -.02em;
+  margin-bottom: .9rem;
+  background: linear-gradient(135deg, var(--tx1) 0%, #6dd5a8 55%, var(--sky) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+[data-theme="light"] h1 {
+  background: linear-gradient(135deg, #111827 0%, #1a7a55 55%, #1e6fa0 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.header-sub {
+  font-size: clamp(.88rem, 1.8vw, 1rem);
+  color: var(--tx2); max-width: 580px; line-height: 1.75; font-weight: 300;
+}
+.header-sub em { color: var(--gold); font-style: normal; font-weight: 500; }
+[data-theme="light"] .header-sub em { color: #b07c08; }
+
+/* Header right controls */
+.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: .75rem; }
+
+.meta-pills { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+.meta-pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .3rem .75rem;
+  border-radius: 100px;
+  background: var(--surface); border: 1px solid var(--border-hi);
+  font-size: .72rem; font-weight: 500; color: var(--tx2);
+  white-space: nowrap;
+}
+.meta-pill svg { width: 12px; height: 12px; opacity: .7; }
+
+/* Theme toggle */
+.theme-btn {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .4rem .85rem;
+  border-radius: 100px;
+  border: 1px solid var(--border-hi);
+  background: var(--surface);
+  color: var(--tx2); font-size: .75rem; font-weight: 500;
+  transition: var(--trans);
+  cursor: pointer;
+}
+.theme-btn:hover { background: var(--surface-hi); color: var(--tx1); border-color: var(--jade); }
+.theme-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.theme-icon-sun, .theme-icon-moon { transition: opacity .2s; }
+[data-theme="dark"]  .theme-icon-sun  { display: none; }
+[data-theme="light"] .theme-icon-moon { display: none; }
+
+/* Progress ring */
+.ring-wrap { position: relative; width: 74px; height: 74px; flex-shrink: 0; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.ring-bg   { fill: none; stroke: var(--border); stroke-width: 4; }
+.ring-fill { fill: none; stroke: var(--jade); stroke-width: 4; stroke-linecap: round;
+  stroke-dasharray: 195.5; stroke-dashoffset: 195.5;
+  transition: stroke-dashoffset .9s cubic-bezier(.4,0,.2,1); }
+.ring-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .05rem;
+}
+.ring-pct  { font-size: .95rem; font-weight: 700; color: var(--jade); line-height: 1; }
+.ring-sub  { font-size: .56rem; color: var(--tx3); letter-spacing: .05em; text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════ */
+nav#main-nav {
+  position: sticky; top: 0; z-index: 100;
+  height: var(--nav-h);
+  background: var(--nav-bg);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 clamp(1.25rem,4vw,3.5rem);
+  transition: background .3s;
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto; width: 100%;
+  display: flex; align-items: center; gap: .3rem;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .5rem 1rem;
+  border-radius: var(--r-sm);
+  font-size: .8rem; font-weight: 500;
+  color: var(--tx3);
+  transition: var(--trans);
+  white-space: nowrap; flex-shrink: 0;
+  position: relative;
+}
+.tab-btn:hover { color: var(--tx1); background: var(--surface); }
+.tab-btn.active { color: var(--jade); background: rgba(45,189,130,.1); }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 22px; height: 2px; border-radius: 1px; background: var(--jade);
+}
+.tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.tab-label { display: none; }
+@media (min-width: 480px) { .tab-label { display: inline; } }
+
+/* ═══════════════════════════════════════════════════
+   PAGE BODY + SIDEBAR
+═══════════════════════════════════════════════════ */
+.page-body {
+  flex: 1; display: flex;
+  max-width: 1400px; margin: 0 auto; width: 100%;
+  padding: clamp(1.5rem,3vw,2.5rem) clamp(1.25rem,3vw,3.5rem);
+  gap: 2rem; align-items: flex-start;
+}
+
+aside#sidebar {
+  width: var(--sidebar-w); flex-shrink: 0;
+  position: sticky; top: calc(var(--nav-h) + 1.25rem);
+  max-height: calc(100vh - var(--nav-h) - 2.5rem);
+  overflow-y: auto; scrollbar-width: thin;
+  display: none; flex-direction: column; gap: .25rem;
+  padding-right: .25rem;
+}
+@media (min-width: 1100px) { aside#sidebar { display: flex; } }
+
+.sb-label {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--tx3);
+  padding: .6rem .6rem .2rem; margin-top: .25rem;
+}
+.sb-link {
+  display: flex; align-items: center; gap: .55rem;
+  padding: .45rem .6rem; border-radius: var(--r-sm);
+  font-size: .78rem; font-weight: 400; color: var(--tx2);
+  cursor: pointer; transition: var(--trans);
+  border: 1px solid transparent;
+}
+.sb-link:hover { color: var(--tx1); background: var(--surface); }
+.sb-link.active { color: var(--jade); background: rgba(45,189,130,.09); border-color: rgba(45,189,130,.18); }
+.sb-num {
+  width: 22px; height: 22px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 700; flex-shrink: 0;
+}
+.sb-check { margin-left: auto; color: var(--jade); flex-shrink: 0; opacity: 0; transition: opacity .2s; }
+.sb-check.visible { opacity: 1; }
+.sb-check svg { width: 11px; height: 11px; }
+
+main { flex: 1; min-width: 0; }
+
+/* ═══════════════════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════════════════ */
+.sec-head { margin-bottom: 2rem; }
+.sec-head h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(1.5rem,3vw,2.1rem);
+  font-weight: 700; margin-bottom: .3rem;
+}
+.sec-head p { font-size: .88rem; color: var(--tx3); }
+
+/* ═══════════════════════════════════════════════════
+   TAB PANES
+═══════════════════════════════════════════════════ */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fade-up .3s ease-out; }
+@keyframes fade-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══════════════════════════════════════════════════
+   CARDS — shared
+═══════════════════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  transition: var(--trans);
+}
+.card:hover { background: var(--surface-hi); border-color: var(--border-hi); }
+
+/* ═══════════════════════════════════════════════════
+   UNIT BLOCKS
+═══════════════════════════════════════════════════ */
+.unit-block { margin-bottom: 2.75rem; }
+.unit-strip {
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 1rem; padding-bottom: .75rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; gap-y: .5rem;
+}
+.unit-badge {
+  font-size: .67rem; font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; padding: .28rem .7rem;
+  border-radius: 100px;
+}
+.ub1{background:rgba(45,189,130,.14);color:var(--jade);}
+.ub2{background:rgba(212,150,10,.14);color:var(--gold);}
+.ub3{background:rgba(139,111,224,.14);color:var(--plum);}
+.ub4{background:rgba(217,95,95,.14);color:var(--coral);}
+[data-theme="light"] .ub2 { color:#a07008; background:rgba(212,150,10,.15); }
+[data-theme="light"] .ub3 { color:#6040c0; background:rgba(139,111,224,.15); }
+[data-theme="light"] .ub4 { color:#b83030; background:rgba(217,95,95,.15); }
+[data-theme="light"] .ub1 { color:#1a8a5c; background:rgba(45,189,130,.15); }
+
+.unit-title { font-family: var(--ff-display); font-size: clamp(.95rem,2vw,1.15rem); font-weight: 700; }
+.unit-prog { margin-left: auto; display: flex; align-items: center; gap: .45rem; }
+.unit-prog-txt { font-size: .7rem; color: var(--tx3); }
+.unit-bar { width: 64px; height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.unit-bar-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+.fill-jade{background:var(--jade);} .fill-gold{background:var(--gold);} .fill-plum{background:var(--plum);} .fill-coral{background:var(--coral);}
+
+/* ═══════════════════════════════════════════════════
+   SESSION CARDS
+═══════════════════════════════════════════════════ */
+.sess-card {
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: .65rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: border-color .2s, background .2s;
+}
+.sess-card:hover { background: var(--surface-hi); border-color: var(--border-hi); }
+.sess-card.done { border-color: rgba(45,189,130,.28); }
+[data-theme="light"] .sess-card.done { background: rgba(45,189,130,.04); }
+
+.sess-top {
+  display: flex; align-items: center; gap: clamp(.75rem,2vw,1.1rem);
+  padding: clamp(.9rem,2vw,1.15rem) clamp(.9rem,2vw,1.25rem);
+  cursor: pointer; user-select: none;
+}
+.sess-num {
+  width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-display); font-size: .95rem; font-weight: 700;
+  position: relative;
+}
+.sn1{background:rgba(45,189,130,.13);color:var(--jade);}
+.sn2{background:rgba(212,150,10,.13);color:var(--gold);}
+.sn3{background:rgba(139,111,224,.13);color:var(--plum);}
+.sn4{background:rgba(217,95,95,.13);color:var(--coral);}
+[data-theme="light"] .sn2{color:#a07008;} [data-theme="light"] .sn3{color:#6040c0;} [data-theme="light"] .sn4{color:#b83030;} [data-theme="light"] .sn1{color:#1a8a5c;}
+
+.done-ring {
+  position: absolute; inset: 0; border-radius: var(--r-md);
+  background: var(--jade); display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+}
+.sess-card.done .done-ring { opacity: 1; }
+.done-ring svg { width: 18px; height: 18px; color: #fff; }
+
+.sess-info { flex: 1; min-width: 0; }
+.sess-info h4 {
+  font-family: var(--ff-display);
+  font-size: clamp(.9rem,2vw,1.05rem);
+  font-weight: 700; line-height: 1.3; margin-bottom: .2rem;
+}
+.sess-sub { font-size: .75rem; color: var(--tx3); line-height: 1.4; }
+
+.sess-actions { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+.check-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid var(--border-hi);
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--trans); flex-shrink: 0;
+}
+.check-btn:hover { border-color: var(--jade); background: rgba(45,189,130,.1); }
+.sess-card.done .check-btn { background: var(--jade); border-color: var(--jade); }
+.check-btn svg { width: 13px; height: 13px; color: #fff; opacity: 0; transition: opacity .2s; }
+.sess-card.done .check-btn svg { opacity: 1; }
+.sess-arrow { width: 18px; height: 18px; color: var(--tx3); transition: transform .25s ease; flex-shrink: 0; }
+.sess-card.open .sess-arrow { transform: rotate(180deg); }
+
+.sess-body {
+  display: none; padding: 0 clamp(.9rem,2vw,1.25rem) clamp(.9rem,2vw,1.15rem);
+  border-top: 1px solid var(--border);
+}
+.sess-card.open .sess-body { display: block; }
+.sess-body-inner { padding-top: 1rem; }
+
+.sess-focus { font-size: .9rem; color: var(--tx2); line-height: 1.75; margin-bottom: 1rem; }
+.sess-focus strong { color: var(--tx1); font-weight: 600; }
+
+.tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.tag { padding: .2rem .65rem; border-radius: 100px; font-size: .7rem; font-weight: 500; }
+.t1{background:rgba(45,189,130,.12);color:var(--jade);}
+.t2{background:rgba(212,150,10,.12);color:var(--gold);}
+.t3{background:rgba(139,111,224,.12);color:var(--plum);}
+.t4{background:rgba(217,95,95,.12);color:var(--coral);}
+[data-theme="light"] .t2{color:#a07008;} [data-theme="light"] .t3{color:#5030b8;} [data-theme="light"] .t4{color:#b03030;} [data-theme="light"] .t1{color:#1a7a52;}
+
+.milestone {
+  display: flex; align-items: flex-start; gap: .55rem;
+  padding: .65rem .9rem; border-radius: var(--r-sm);
+  font-size: .8rem; font-weight: 500; line-height: 1.55;
+  margin-top: .9rem;
+}
+.ms-gold { background:rgba(212,150,10,.1); color:var(--gold); border:1px solid rgba(212,150,10,.22); }
+.ms-teal { background:rgba(32,196,172,.1); color:var(--teal); border:1px solid rgba(32,196,172,.22); }
+[data-theme="light"] .ms-gold { color:#9a7008; background:rgba(212,150,10,.1); border-color:rgba(212,150,10,.3); }
+[data-theme="light"] .ms-teal { color:#1a8a7c; background:rgba(32,196,172,.1); border-color:rgba(32,196,172,.3); }
+
+/* ═══════════════════════════════════════════════════
+   QUOTE
+═══════════════════════════════════════════════════ */
+.quote-card {
+  margin-top: 2rem; padding: 1.4rem 1.75rem;
+  border-radius: var(--r-lg); border-left: 3px solid var(--jade);
+  background: linear-gradient(135deg, rgba(45,189,130,.07), rgba(58,172,224,.04));
+}
+[data-theme="light"] .quote-card { background: linear-gradient(135deg, rgba(45,189,130,.07), rgba(58,172,224,.05)); }
+.quote-card p {
+  font-family: var(--ff-display);
+  font-size: clamp(.92rem,2vw,1.07rem);
+  font-style: italic; line-height: 1.75; color: var(--tx2);
+}
+
+/* ═══════════════════════════════════════════════════
+   TIMELINE TAB
+═══════════════════════════════════════════════════ */
+.tl-intro {
+  padding: 1rem 1.25rem; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .88rem; color: var(--tx2); line-height: 1.65;
+  margin-bottom: 1.75rem;
+}
+.tl-intro strong { color: var(--tx1); }
+
+.tl-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: .75rem; margin-bottom: 1.75rem;
+}
+@media (max-width: 520px) { .tl-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 360px) { .tl-grid { grid-template-columns: 1fr; } }
+
+.tl-cell {
+  padding: 1rem; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--surface);
+  position: relative; overflow: hidden; cursor: pointer;
+  transition: var(--trans);
+}
+.tl-cell:hover { background: var(--surface-hi); border-color: var(--border-hi); }
+.tl-cell::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; }
+.tl-f1::before { background:linear-gradient(90deg,var(--jade),var(--teal)); }
+.tl-f2::before { background:linear-gradient(90deg,var(--gold),#c8a030); }
+.tl-f3::before { background:linear-gradient(90deg,var(--plum),var(--coral)); }
+.tl-cell.done { border-color: rgba(45,189,130,.3); }
+[data-theme="light"] .tl-cell.done { background: rgba(45,189,130,.05); }
+
+.tl-bg-num {
+  position: absolute; top: .5rem; right: .75rem;
+  font-family: var(--ff-display); font-size: 2rem; font-weight: 700;
+  line-height: 1; opacity: .07; pointer-events: none;
+}
+.tl-unit  { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .35rem; }
+.tl-title { font-size: .8rem; font-weight: 500; line-height: 1.35; margin-bottom: .5rem; color: var(--tx1); }
+.tl-phase { font-size: .64rem; font-weight: 600; padding: .15rem .5rem; border-radius: 100px; display: inline-block; }
+.tp1{background:rgba(45,189,130,.14);color:var(--jade);} .tp2{background:rgba(212,150,10,.14);color:var(--gold);} .tp3{background:rgba(139,111,224,.14);color:var(--plum);}
+[data-theme="light"] .tp2{color:#9a6808;} [data-theme="light"] .tp3{color:#5030b8;} [data-theme="light"] .tp1{color:#1a7a52;}
+.tl-done-stamp { display:none; align-items:center; gap:.3rem; margin-top:.4rem; font-size:.68rem; color:var(--jade); font-weight:500; }
+.tl-cell.done .tl-done-stamp { display:flex; }
+[data-theme="light"] .tl-cell.done .tl-done-stamp { color: #1a8a5c; }
+
+.tl-phase-row { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+@media (max-width: 600px) { .tl-phase-row { grid-template-columns:1fr; } }
+
+.tl-phase-box {
+  padding: 1.1rem; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--surface);
+  position: relative; overflow: hidden;
+}
+.tl-phase-box::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; }
+.tpb1::before{background:linear-gradient(90deg,var(--jade),var(--teal));}
+.tpb2::before{background:linear-gradient(90deg,var(--gold),#c8a030);}
+.tpb3::before{background:linear-gradient(90deg,var(--plum),var(--coral));}
+.tpb-name { font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:.3rem; }
+.tpb-title { font-family:var(--ff-display);font-size:.95rem;font-weight:700;margin-bottom:.2rem; }
+.tpb-sess { font-size:.72rem;color:var(--tx3); }
+.tpb-pct { font-family:var(--ff-display);font-size:1.6rem;font-weight:700;float:right;margin-top:-.1rem; }
+.pct-jade{color:var(--jade);} .pct-gold{color:var(--gold);} .pct-plum{color:var(--plum);}
+[data-theme="light"] .pct-gold{color:#a07008;} [data-theme="light"] .pct-plum{color:#5030b8;}
+
+/* ═══════════════════════════════════════════════════
+   PROYECTO TAB
+═══════════════════════════════════════════════════ */
+.proj-intro {
+  padding: 1.1rem 1.35rem; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--border);
+  font-size: .9rem; color: var(--tx2); line-height: 1.7;
+  margin-bottom: 2rem; text-align: center;
+}
+.proj-intro strong { color: var(--tx1); }
+
+.phases-grid { display: grid; gap: 1rem; }
+@media (min-width: 900px) { .phases-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+.phase-card {
+  border-radius: var(--r-xl); border: 1px solid var(--border);
+  background: var(--surface); overflow: hidden;
+  box-shadow: var(--shadow-card); position: relative;
+}
+.phase-card::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; }
+.pc1::before{background:linear-gradient(90deg,var(--jade),var(--teal));}
+.pc2::before{background:linear-gradient(90deg,var(--gold),#c8a030);}
+.pc3::before{background:linear-gradient(90deg,var(--plum),var(--coral));}
+
+.phase-top { padding:1.35rem 1.35rem .85rem; display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem; }
+.phase-tag { font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .7rem;border-radius:100px;display:inline-block;margin-bottom:.35rem; }
+.pt1{background:rgba(45,189,130,.14);color:var(--jade);}
+.pt2{background:rgba(212,150,10,.14);color:var(--gold);}
+.pt3{background:rgba(139,111,224,.14);color:var(--plum);}
+[data-theme="light"] .pt2{color:#a07008;} [data-theme="light"] .pt3{color:#5030b8;} [data-theme="light"] .pt1{color:#1a7a52;}
+.phase-sess { font-size:.72rem;color:var(--tx3); }
+.phase-pct { font-family:var(--ff-display);font-size:2.2rem;font-weight:700;line-height:1; }
+.pp1{color:var(--jade);} .pp2{color:var(--gold);} .pp3{color:var(--plum);}
+[data-theme="light"] .pp2{color:#a07008;} [data-theme="light"] .pp3{color:#5030b8;}
+.phase-body { padding:0 1.35rem 1.35rem; }
+.phase-body h3 { font-family:var(--ff-display);font-size:1.15rem;font-weight:700;margin-bottom:.9rem; }
+.phase-items { display:flex;flex-direction:column;gap:.55rem;margin-bottom:1rem; }
+.phase-item { display:flex;align-items:flex-start;gap:.6rem;font-size:.85rem;color:var(--tx2);line-height:1.6; }
+.pi-icon { font-size:.9rem;flex-shrink:0;margin-top:.08em; }
+.phase-item strong { color:var(--tx1);font-weight:500; }
+.delivery { padding:.8rem .95rem;border-radius:var(--r-sm);background:rgba(58,172,224,.07);border:1px solid rgba(58,172,224,.2);font-size:.78rem;color:var(--tx2);line-height:1.5; }
+[data-theme="light"] .delivery { background:rgba(58,172,224,.07);border-color:rgba(58,172,224,.25); }
+.delivery .dlabel { font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--sky);margin-bottom:.25rem; }
+[data-theme="light"] .delivery .dlabel { color:#2080b8; }
+
+.weight-box { margin-top:2rem;padding:1.35rem;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface); }
+.weight-box h4 { font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:1rem;text-align:center; }
+.wrow { display:flex;align-items:center;gap:.6rem;font-size:.82rem;margin-bottom:.4rem; }
+.wdot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.wbar { height:7px;border-radius:4px;background:var(--border);overflow:hidden;display:flex;margin-top:.9rem; }
+.wseg { height:100%; }
+
+/* ═══════════════════════════════════════════════════
+   RÚBRICAS TAB
+═══════════════════════════════════════════════════ */
+.rub-nav { display:flex;gap:.45rem;margin-bottom:1.75rem;flex-wrap:wrap; }
+.rub-tab {
+  padding:.48rem 1.05rem;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:var(--surface);
+  font-size:.8rem;font-weight:500;color:var(--tx2);transition:var(--trans);
+}
+.rub-tab:hover { background:var(--surface-hi);color:var(--tx1); }
+.rub-tab.ar1{background:rgba(45,189,130,.12);color:var(--jade);border-color:rgba(45,189,130,.28);}
+.rub-tab.ar2{background:rgba(212,150,10,.12);color:var(--gold);border-color:rgba(212,150,10,.28);}
+.rub-tab.ar3{background:rgba(139,111,224,.12);color:var(--plum);border-color:rgba(139,111,224,.28);}
+[data-theme="light"] .rub-tab.ar2{color:#9a6808;} [data-theme="light"] .rub-tab.ar3{color:#5030b8;} [data-theme="light"] .rub-tab.ar1{color:#1a7a52;}
+
+.rub-panel { display:none; }
+.rub-panel.open { display:block; }
+
+.rp-head { display:flex;align-items:center;gap:.8rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border); }
+.rp-icon { width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0; }
+.ri1{background:rgba(45,189,130,.14);color:var(--jade);}
+.ri2{background:rgba(212,150,10,.14);color:var(--gold);}
+.ri3{background:rgba(139,111,224,.14);color:var(--plum);}
+[data-theme="light"] .ri2{color:#a07008;} [data-theme="light"] .ri3{color:#5030b8;} [data-theme="light"] .ri1{color:#1a7a52;}
+.rp-head h3 { font-family:var(--ff-display);font-size:1.05rem;font-weight:700; }
+
+.rp-body { padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:.8rem; }
+.rub-row { padding:.95rem 1.05rem;border-radius:var(--r-sm);background:rgba(0,0,0,.025);border:1px solid var(--border); }
+[data-theme="light"] .rub-row { background:rgba(0,0,0,.02); }
+.rub-row-top { display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.35rem; }
+.rub-label { font-size:.87rem;font-weight:500; }
+.rub-label small { color:var(--tx3);font-weight:400;font-size:.74rem; }
+.rub-input {
+  width:70px;padding:.35rem .55rem;border-radius:var(--r-sm);
+  border:1px solid var(--border-hi);background:var(--surface-hi);
+  color:var(--tx1);font-family:var(--ff-body);font-size:.88rem;font-weight:600;
+  text-align:center;transition:var(--trans);
+}
+.rub-input:focus { outline:none;border-color:var(--jade);box-shadow:0 0 0 3px rgba(45,189,130,.15); }
+.rub-desc { font-size:.78rem;color:var(--tx3);line-height:1.55; }
+
+.rub-total {
+  padding:1rem;text-align:center;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,rgba(45,189,130,.09),rgba(58,172,224,.05));
+  border:1px solid rgba(45,189,130,.22);
+}
+.rub-total-lbl { font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:.3rem; }
+.rub-total-val { font-family:var(--ff-display);font-size:2.5rem;font-weight:700;color:var(--jade);line-height:1; }
+[data-theme="light"] .rub-total-val { color:#1a8a5c; }
+
+/* Final calc */
+.calc-card {
+  margin-top:1.75rem;padding:1.35rem;
+  border-radius:var(--r-xl);border:1px solid var(--border-hi);
+  background:var(--surface);position:relative;overflow:hidden;
+  box-shadow:var(--shadow-card);
+}
+.calc-card::before { content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--jade),var(--sky),var(--plum)); }
+.calc-card h4 { font-family:var(--ff-display);font-size:1.1rem;font-weight:700;margin-bottom:1.1rem; }
+.calc-rows { display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem; }
+.calc-row {
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:.75rem;
+  padding:.7rem .9rem;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:rgba(0,0,0,.02);font-size:.84rem;
+}
+[data-theme="dark"] .calc-row { background:rgba(255,255,255,.02); }
+.cr-lbl { color:var(--tx2); }
+.cr-wt  { color:var(--tx3);font-size:.74rem; }
+.cr-val { font-weight:700;font-size:.9rem;min-width:42px;text-align:right; }
+.calc-final {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.05rem;border-radius:var(--r-sm);
+  background:rgba(45,189,130,.09);border:1px solid rgba(45,189,130,.25);
+}
+.calc-final-l .lbl { font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);font-weight:600; }
+.calc-final-l .grade { font-size:.8rem;color:var(--jade);font-weight:500;margin-top:.1rem; }
+[data-theme="light"] .calc-final-l .grade { color:#1a8a5c; }
+.calc-final-val { font-family:var(--ff-display);font-size:2rem;font-weight:700;color:var(--jade); }
+[data-theme="light"] .calc-final-val { color:#1a8a5c; }
+
+.escala { display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-top:1.75rem; }
+@media(max-width:520px){.escala{grid-template-columns:repeat(3,1fr);}}
+.esc-item{text-align:center;padding:.7rem .4rem;border-radius:var(--r-sm);border:1px solid var(--border);}
+.esc-val{font-family:var(--ff-display);font-size:1.05rem;font-weight:700;margin-bottom:.15rem;}
+.esc-lbl{font-size:.67rem;color:var(--tx3);}
+.er{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.2);}.er .esc-val{color:#e05555;}
+.eo{background:rgba(251,146,60,.07);border-color:rgba(251,146,60,.2);}.eo .esc-val{color:#d07030;}
+.ey{background:rgba(212,150,10,.07);border-color:rgba(212,150,10,.2);}.ey .esc-val{color:var(--gold);}
+.eg{background:rgba(45,189,130,.07);border-color:rgba(45,189,130,.2);}.eg .esc-val{color:var(--jade);}
+.ec{background:rgba(58,172,224,.07);border-color:rgba(58,172,224,.2);}.ec .esc-val{color:var(--sky);}
+[data-theme="light"] .er .esc-val{color:#c03030;} [data-theme="light"] .ey .esc-val{color:#a07008;} [data-theme="light"] .eg .esc-val{color:#1a8a5c;} [data-theme="light"] .ec .esc-val{color:#1878b0;}
+
+/* ═══════════════════════════════════════════════════
+   BIBLIOGRAFÍA
+═══════════════════════════════════════════════════ */
+.drive-card {
+  padding:1.25rem 1.5rem;border-radius:var(--r-lg);
+  border:1px solid rgba(58,172,224,.25);
+  background:linear-gradient(135deg,rgba(58,172,224,.07),rgba(45,189,130,.04));
+  margin-bottom:1.75rem;
+}
+.drive-card h3 { font-family:var(--ff-display);font-size:1.05rem;font-weight:700;margin-bottom:.35rem; }
+.drive-card p  { font-size:.85rem;color:var(--tx2);margin-bottom:.85rem;line-height:1.65; }
+.drive-url {
+  display:block;font-family:monospace;font-size:.75rem;color:var(--sky);
+  padding:.58rem .85rem;border-radius:var(--r-sm);
+  background:rgba(0,0,0,.1);border:1px solid var(--border-hi);
+  word-break:break-all;margin-bottom:.8rem;
+}
+[data-theme="light"] .drive-url { background:rgba(0,0,0,.04);color:#1878b0; }
+.copy-btn {
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.42rem .9rem;border-radius:var(--r-sm);
+  border:1px solid rgba(58,172,224,.3);background:rgba(58,172,224,.1);
+  color:var(--sky);font-size:.78rem;font-weight:500;cursor:pointer;transition:var(--trans);
+}
+.copy-btn:hover{background:rgba(58,172,224,.18);}
+[data-theme="light"] .copy-btn{color:#1878b0;border-color:rgba(58,172,224,.35);}
+
+.bib-cat { border-radius:var(--r-md);border:1px solid var(--border);overflow:hidden;margin-bottom:.6rem;box-shadow:var(--shadow-card); }
+.bib-cat-btn {
+  width:100%;padding:.95rem 1.15rem;
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);border:none;color:var(--tx1);
+  cursor:pointer;text-align:left;transition:var(--trans);
+}
+.bib-cat-btn:hover{background:var(--surface-hi);}
+.bib-icon{width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.bib-info{flex:1;}
+.bib-info h4{font-family:var(--ff-display);font-size:.95rem;font-weight:700;margin-bottom:.12rem;}
+.bib-info p{font-size:.74rem;color:var(--tx3);}
+.bib-arrow{width:16px;height:16px;color:var(--tx3);transition:transform .22s;flex-shrink:0;}
+.bib-cat.open .bib-arrow{transform:rotate(180deg);}
+
+.bib-list{display:none;flex-direction:column;gap:.55rem;padding:.9rem 1.15rem;border-top:1px solid var(--border);}
+.bib-cat.open .bib-list{display:flex;}
+.bib-entry{padding:.8rem .95rem;border-radius:var(--r-sm);background:rgba(0,0,0,.025);border-left:2px solid var(--border-hi);font-size:.82rem;color:var(--tx2);line-height:1.65;}
+[data-theme="dark"] .bib-entry{background:rgba(255,255,255,.025);}
+.bib-entry em{font-style:italic;color:var(--tx1);}
+.bib-doi{font-size:.71rem;color:var(--tx3);margin-top:.3rem;}
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+footer {
+  border-top:1px solid var(--border);
+  padding:1.35rem clamp(1.25rem,4vw,3.5rem);
+  text-align:center;font-size:.75rem;color:var(--tx3);
+  transition:border-color .3s;
+}
+footer span{color:var(--jade);}
+[data-theme="light"] footer span{color:#1a8a5c;}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+#toast {
+  position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;
+  padding:.6rem 1.1rem;border-radius:var(--r-sm);
+  background:var(--jade);color:#fff;
+  font-size:.8rem;font-weight:600;
+  transform:translateY(80px);opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+[data-theme="light"] #toast { color:#fff; }
+#toast.show{transform:translateY(0);opacity:1;}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE EXTRAS
+═══════════════════════════════════════════════════ */
+@media(max-width:780px){
+  .header-inner{grid-template-columns:1fr;}
+  .header-right{flex-direction:row;align-items:center;flex-wrap:wrap;}
+  .ring-wrap{display:none;}
+  .tl-phase-row{grid-template-columns:1fr;}
+}
+@media(max-width:420px){
+  .phases-grid{grid-template-columns:1fr;}
+  .sess-info h4{font-size:.88rem;}
+}
+@media(min-width:1600px){
+  html{font-size:17px;}
+  .page-body{max-width:1600px;}
+}
+</style>
+</head>
+<body>
+
+<div id="ambient">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<div id="shell">
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="kicker"><span class="kicker-dot"></span>Maestría en Salud Pública &nbsp;·&nbsp; Areandina &nbsp;·&nbsp; Semestre 4</div>
+      <h1>Cultura, Ambiente<br>y Sociedad</h1>
+      <p class="header-sub">
+        Asignatura de profundización para salubristas en último semestre.
+        Articula <em>Ciencia Crítica</em>, <em>Alternativas al Desarrollo</em>
+        y soluciones territoriales co-construidas con las comunidades.
+      </p>
+    </div>
+    <div class="header-right">
+      <div class="meta-pills">
+        <span class="meta-pill">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          9 Sesiones · 4 Unidades
+        </span>
+        <span class="meta-pill">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          3 Fases del Proyecto
+        </span>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Cambiar tema">
+        <!-- Sun icon -->
+        <svg class="theme-icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+        <span class="theme-icon-sun">Modo claro</span>
+        <!-- Moon icon -->
+        <svg class="theme-icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <span class="theme-icon-moon">Modo oscuro</span>
+      </button>
+      <div class="ring-wrap" title="Progreso del semestre">
+        <svg width="74" height="74" viewBox="0 0 74 74">
+          <circle class="ring-bg"   cx="37" cy="37" r="31"/>
+          <circle class="ring-fill" id="ring-fill" cx="37" cy="37" r="31"/>
+        </svg>
+        <div class="ring-label">
+          <span class="ring-pct" id="ring-pct">0%</span>
+          <span class="ring-sub">Visto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ NAV ══ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <button class="tab-btn active" onclick="showTab('sesiones',this)" data-tab="sesiones">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      <span class="tab-label">Sesiones</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('timeline',this)" data-tab="timeline">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      <span class="tab-label">Línea de Tiempo</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('proyecto',this)" data-tab="proyecto">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      <span class="tab-label">Proyecto</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('rubricas',this)" data-tab="rubricas">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span class="tab-label">Rúbricas</span>
+    </button>
+    <button class="tab-btn" onclick="showTab('bibliografia',this)" data-tab="bibliografia">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <span class="tab-label">Bibliografía</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PAGE BODY ══ -->
+<div class="page-body">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-label">Unidad 1 · Salud Global</div>
+    <div class="sb-link" id="sl-1" onclick="goToSess(1)"><div class="sb-num sn1">1</div>Apertura Territorial<span class="sb-check" id="sc-1"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-link" id="sl-2" onclick="goToSess(2)"><div class="sb-num sn1">2</div>Salud Ambiental<span class="sb-check" id="sc-2"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-link" id="sl-3" onclick="goToSess(3)"><div class="sb-num sn1">3</div>Determinación Social<span class="sb-check" id="sc-3"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-label" style="margin-top:.4rem">Unidad 2 · Contextos</div>
+    <div class="sb-link" id="sl-4" onclick="goToSess(4)"><div class="sb-num sn2">4</div>Problemas Ambientales<span class="sb-check" id="sc-4"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-link" id="sl-5" onclick="goToSess(5)"><div class="sb-num sn2">5</div>Política Ambiental<span class="sb-check" id="sc-5"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-label" style="margin-top:.4rem">Unidad 3 · Cultura</div>
+    <div class="sb-link" id="sl-6" onclick="goToSess(6)"><div class="sb-num sn3">6</div>Cultura · Pluriverso<span class="sb-check" id="sc-6"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-link" id="sl-7" onclick="goToSess(7)"><div class="sb-num sn3">7</div>Saberes Populares<span class="sb-check" id="sc-7"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-label" style="margin-top:.4rem">Unidad 4 · Sistemas</div>
+    <div class="sb-link" id="sl-8" onclick="goToSess(8)"><div class="sb-num sn4">8</div>Interculturalidad<span class="sb-check" id="sc-8"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+    <div class="sb-link" id="sl-9" onclick="goToSess(9)"><div class="sb-num sn4">9</div>Comunicación · Cierre<span class="sb-check" id="sc-9"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></span></div>
+  </aside>
+
+  <main>
+
+  <!-- ══════════ TAB: SESIONES ══════════ -->
+  <div id="pane-sesiones" class="tab-pane active">
+    <div class="sec-head"><h2>Ruta de Aprendizaje</h2><p>9 sesiones · 4 unidades del microcurrículo · Marca cada sesión como vista con ✓</p></div>
+
+    <!-- UNIDAD 1 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub1">Unidad 1</span>
+        <span class="unit-title">Salud Global y Salud Ambiental</span>
+        <div class="unit-prog"><span class="unit-prog-txt" id="up1-txt">0/3</span><div class="unit-bar"><div class="unit-bar-fill fill-jade" id="ub-fill-1" style="width:0%"></div></div></div>
+      </div>
+      <div class="sess-card" id="sess-1"><div class="sess-top" onclick="toggleSess(1)"><div class="sess-num sn1"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>01</div><div class="sess-info"><h4>Apertura Territorial y Fundamentos de Salud Global</h4><span class="sess-sub">Salud global vs. salud colectiva · Enfoques críticos · Poder y política en salud</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(1)" aria-label="Marcar sesión 1 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Los estudiantes reconocen el territorio como tejido vivo y complejo. Se contrastan los fundamentos de la salud global convencional (OMS, CDSS) con los de la salud colectiva latinoamericana, explorando las tensiones de poder que configuran la agenda global de salud y sus implicaciones para los territorios del Sur.</p><div class="tags"><span class="tag t1">Fundamentos Salud Global</span><span class="tag t1">Salud Colectiva</span><span class="tag t1">Política y Poder</span><span class="tag t1">Territorio</span></div></div></div></div>
+      <div class="sess-card" id="sess-2"><div class="sess-top" onclick="toggleSess(2)"><div class="sess-num sn1"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>02</div><div class="sess-info"><h4>Salud Ambiental, Antropoceno y Capitaloceno</h4><span class="sess-sub">Crisis ambiental · Extractivismo · Cambio climático y salud · ODS</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(2)" aria-label="Marcar sesión 2 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se profundiza en los fundamentos histórico-conceptuales de la salud ambiental. Desde Jason Moore y la noción del Capitaloceno, se analiza cómo el modelo extractivista produce "zonas de sacrificio" y enfermedad. Se revisan los impactos del cambio climático en los territorios del Sur Global, vinculando críticamente la Agenda 2030 con sus límites estructurales.</p><div class="tags"><span class="tag t1">Salud Ambiental</span><span class="tag t1">Capitaloceno</span><span class="tag t1">Zonas de Sacrificio</span><span class="tag t1">Cambio Climático</span></div></div></div></div>
+      <div class="sess-card" id="sess-3"><div class="sess-top" onclick="toggleSess(3)"><div class="sess-num sn1"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>03</div><div class="sess-info"><h4>Determinación Social de la Salud</h4><span class="sess-sub">Breilh · Procesos críticos · Tres dominios · <strong>Hito Fase 1</strong></span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(3)" aria-label="Marcar sesión 3 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Los estudiantes diferencian los Determinantes Sociales (OMS/CDSS) de la Determinación Social latinoamericana (Breilh, Laurell). Se introduce el análisis de los "procesos críticos" y los tres dominios del modelo (general, particular, singular), aplicados al conflicto socio-ambiental del territorio elegido.</p><div class="tags"><span class="tag t1">Jaime Breilh</span><span class="tag t1">Determinación Social</span><span class="tag t1">Procesos Críticos</span><span class="tag t1">Epidemiología Crítica</span></div><div class="milestone ms-gold">🎯 <span><strong>HITO — Entrega Fase 1:</strong> Diagnóstico Territorial con cartografía social o árbol de problemas, fotografías y entrevistas a actores clave del territorio.</span></div></div></div></div>
+    </div>
+
+    <!-- UNIDAD 2 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub2">Unidad 2</span>
+        <span class="unit-title">Análisis de Realidades Contextuales: Salud y Ambiente</span>
+        <div class="unit-prog"><span class="unit-prog-txt" id="up2-txt">0/2</span><div class="unit-bar"><div class="unit-bar-fill fill-gold" id="ub-fill-2" style="width:0%"></div></div></div>
+      </div>
+      <div class="sess-card" id="sess-4"><div class="sess-top" onclick="toggleSess(4)"><div class="sess-num sn2"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>04</div><div class="sess-info"><h4>Problemas Ambientales, Contextos Territoriales y Salud</h4><span class="sess-sub">Ecología política · Conflictos socioambientales · Mapeo crítico</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(4)" aria-label="Marcar sesión 4 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se analizan los problemas ambientales y de salud desde la ecología política (Svampa, Gligo, CEPAL). Los estudiantes mapean conflictos socioambientales en su territorio, relacionando las condiciones del contexto (agua, suelo, aire, biodiversidad) con los perfiles de salud-enfermedad de las comunidades afectadas.</p><div class="tags"><span class="tag t2">Problemas Ambientales</span><span class="tag t2">Ecología Política</span><span class="tag t2">Conflictos Socioambientales</span><span class="tag t2">Mapeo Crítico</span></div></div></div></div>
+      <div class="sess-card" id="sess-5"><div class="sess-top" onclick="toggleSess(5)"><div class="sess-num sn2"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>05</div><div class="sess-info"><h4>Política y Legislación en Salud Ambiental</h4><span class="sess-sub">CONPES 3550 · Normativa colombiana · Alternativas al desarrollo</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(5)" aria-label="Marcar sesión 5 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se revisan los marcos normativos en salud ambiental (CONPES 3550, OPS, OMS, PNUMA) y sus limitaciones frente a las realidades territoriales. Desde Arturo Escobar y las "alternativas al desarrollo", se discuten propuestas que trascienden la visión institucional para construir respuestas arraigadas en los territorios y sus comunidades.</p><div class="tags"><span class="tag t2">Política Pública</span><span class="tag t2">Legislación Ambiental</span><span class="tag t2">CONPES 3550</span><span class="tag t2">Alternativas al Desarrollo</span></div></div></div></div>
+    </div>
+
+    <!-- UNIDAD 3 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub3">Unidad 3</span>
+        <span class="unit-title">Los Procesos de Salud-Enfermedad desde la Cultura</span>
+        <div class="unit-prog"><span class="unit-prog-txt" id="up3-txt">0/2</span><div class="unit-bar"><div class="unit-bar-fill fill-plum" id="ub-fill-3" style="width:0%"></div></div></div>
+      </div>
+      <div class="sess-card" id="sess-6"><div class="sess-top" onclick="toggleSess(6)"><div class="sess-num sn3"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>06</div><div class="sess-info"><h4>Cultura, Ontologías Políticas y Pluriverso de la Salud</h4><span class="sess-sub">¿Qué es cultura? · Escobar · Buen Vivir · <strong>Hito Fase 2</strong></span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(6)" aria-label="Marcar sesión 6 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se revisan los fundamentos antropológicos del concepto de cultura y sus alcances en la comprensión de la salud. Desde Arturo Escobar (<em>Sentipensar con la tierra</em>, <em>Designs for the Pluriverse</em>) y Alberto Acosta (Buen Vivir), los estudiantes exploran cómo las cosmovisiones indígenas y campesinas producen saberes de salud alternativos, cuestionando el universalismo biomédico.</p><div class="tags"><span class="tag t3">Concepto de Cultura</span><span class="tag t3">Ontologías Políticas</span><span class="tag t3">Pluriverso</span><span class="tag t3">Buen Vivir</span></div><div class="milestone ms-gold">🎯 <span><strong>HITO — Entrega Fase 2:</strong> Propuesta de Acción con objetivos de transformación territorial, elaborada o co-construida con la comunidad.</span></div></div></div></div>
+      <div class="sess-card" id="sess-7"><div class="sess-top" onclick="toggleSess(7)"><div class="sess-num sn3"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>07</div><div class="sess-info"><h4>Procesos Culturales de Salud, Enfermedad y Atención</h4><span class="sess-sub">Saberes populares · Autoatención · Crítica al modelo médico hegemónico</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(7)" aria-label="Marcar sesión 7 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se analizan los itinerarios terapéuticos y los procesos culturales de salud-enfermedad-atención desde Eduardo Menéndez (autoatención, modelos de atención). Los estudiantes valoran los saberes populares como forma de resistencia cultural y reconocen los límites del modelo médico hegemónico en territorios pluriculturales.</p><div class="tags"><span class="tag t3">Saberes Populares</span><span class="tag t3">Autoatención</span><span class="tag t3">Itinerarios Terapéuticos</span><span class="tag t3">Resistencia Cultural</span></div></div></div></div>
+    </div>
+
+    <!-- UNIDAD 4 -->
+    <div class="unit-block">
+      <div class="unit-strip">
+        <span class="unit-badge ub4">Unidad 4</span>
+        <span class="unit-title">Cultura y Sistemas de Salud</span>
+        <div class="unit-prog"><span class="unit-prog-txt" id="up4-txt">0/2</span><div class="unit-bar"><div class="unit-bar-fill fill-coral" id="ub-fill-4" style="width:0%"></div></div></div>
+      </div>
+      <div class="sess-card" id="sess-8"><div class="sess-top" onclick="toggleSess(8)"><div class="sess-num sn4"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>08</div><div class="sess-info"><h4>Interculturalidad Crítica, Mediación y Competencia Cultural</h4><span class="sess-sub">Diálogo de saberes · Modelos alternativos de atención · Política intercultural</span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(8)" aria-label="Marcar sesión 8 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se examinan las nociones de diálogo de saberes, mediación cultural y competencia cultural en salud pública (Walsh, De Sousa Santos). Se revisan los modelos alternativos de atención (salud propia, sistemas médicos indígenas) y se analizan las políticas en salud intercultural en Colombia y América Latina, identificando avances, tensiones y deudas institucionales.</p><div class="tags"><span class="tag t4">Interculturalidad Crítica</span><span class="tag t4">Diálogo de Saberes</span><span class="tag t4">Modelos Alternativos</span><span class="tag t4">Política Intercultural</span></div></div></div></div>
+      <div class="sess-card" id="sess-9"><div class="sess-top" onclick="toggleSess(9)"><div class="sess-num sn4"><div class="done-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></div>09</div><div class="sess-info"><h4>Comunicación para la Transformación y Cierre Pedagógico</h4><span class="sess-sub">Producción audiovisual · Decolonización del saber · Plenaria · <strong>Hito Fase 3</strong></span></div><div class="sess-actions"><button class="check-btn" onclick="event.stopPropagation();toggleDone(9)" aria-label="Marcar sesión 9 como vista"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg></button></div><svg class="sess-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div><div class="sess-body"><div class="sess-body-inner"><p class="sess-focus"><strong>Eje temático:</strong> Se trabajan las herramientas de comunicación crítica para salubristas: ética de la imagen, narrativa territorial y producción audiovisual (Nichols, Fals Borda). Los equipos presentan sus videos ante el grupo y realizan reflexión colectiva sobre decolonización del saber e impacto territorial de las intervenciones del semestre.</p><div class="tags"><span class="tag t4">Comunicación Crítica</span><span class="tag t4">Producción Audiovisual</span><span class="tag t4">Decolonización</span><span class="tag t4">Plenaria Final</span></div><div class="milestone ms-teal">🎬 <span><strong>CIERRE — Entrega Fase 3:</strong> Video 5-6 min con proceso completo, reflexión decolonial y propuesta aplicada. Socialización y retroalimentación colectiva.</span></div></div></div></div>
+    </div>
+
+    <div class="quote-card"><p>"Esta guía invita a los salubristas a asumir el territorio como punto de partida ético y epistémico, y la comunidad como interlocutora fundamental en la construcción de una salud pública transformadora."</p></div>
+  </div>
+
+  <!-- ══════════ TAB: TIMELINE ══════════ -->
+  <div id="pane-timeline" class="tab-pane">
+    <div class="sec-head"><h2>Línea de Tiempo del Semestre</h2><p>Vista visual de las 9 sesiones y su relación con el proyecto integrador</p></div>
+    <div class="tl-intro"><strong>Cómo leer esta vista:</strong> cada celda es una sesión. El borde superior indica la fase del proyecto. Las sesiones marcadas como vistas en la pestaña "Sesiones" aparecen sombreadas con ✓. Haz clic en cualquier celda para ir a esa sesión.</div>
+    <div class="tl-grid" id="tl-grid"></div>
+    <div class="tl-phase-row">
+      <div class="tl-phase-box tpb1"><span class="tpb-pct pct-jade">30%</span><div class="tpb-name">Fase 1</div><div class="tpb-title">Diagnóstico Territorial</div><div class="tpb-sess">Sesiones 1 · 2 · 3</div></div>
+      <div class="tl-phase-box tpb2"><span class="tpb-pct pct-gold">30%</span><div class="tpb-name">Fase 2</div><div class="tpb-title">Propuesta de Acción</div><div class="tpb-sess">Sesiones 4 · 5 · 6</div></div>
+      <div class="tl-phase-box tpb3"><span class="tpb-pct pct-plum">40%</span><div class="tpb-name">Fase 3</div><div class="tpb-title">Video y Reflexión Decolonial</div><div class="tpb-sess">Sesiones 7 · 8 · 9</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB: PROYECTO ══════════ -->
+  <div id="pane-proyecto" class="tab-pane">
+    <div class="sec-head"><h2>Proyecto Integrador</h2><p style="font-family:var(--ff-display);font-style:italic;color:var(--tx2)">"La Acción Territorial de un Salubrista"</p></div>
+    <div class="proj-intro">Tres fases acumulativas a lo largo de las 9 sesiones. El resultado final es una <strong>pieza audiovisual</strong> que documenta una solución de salud pública con enfoque territorial, crítico e intercultural.</div>
+    <div class="phases-grid">
+      <div class="phase-card pc1"><div class="phase-top"><div><span class="phase-tag pt1">Fase 1 · Sesiones 1-3</span><div class="phase-sess">Entrega en Sesión 3</div></div><span class="phase-pct pp1">30%</span></div><div class="phase-body"><h3>Diagnóstico Territorial</h3><div class="phase-items"><div class="phase-item"><span class="pi-icon">📍</span><p><strong>Selección:</strong> Colectivo afectado por conflicto socio-ambiental y cultural concreto.</p></div><div class="phase-item"><span class="pi-icon">📊</span><p><strong>Marco:</strong> Determinación Social (Breilh) o Determinantes Sociales (OMS), justificando la elección.</p></div><div class="phase-item"><span class="pi-icon">🗺️</span><p><strong>Herramientas:</strong> Cartografía social o árbol de problemas para visibilizar los conflictos del territorio.</p></div><div class="phase-item"><span class="pi-icon">🎤</span><p><strong>Campo:</strong> Mínimo dos entrevistas en profundidad con actores clave del territorio.</p></div></div><div class="delivery"><div class="dlabel">📦 Entrega · Sesión 3</div>Documento con análisis territorial, evidencia fotográfica y resumen de entrevistas.</div></div></div>
+      <div class="phase-card pc2"><div class="phase-top"><div><span class="phase-tag pt2">Fase 2 · Sesiones 4-6</span><div class="phase-sess">Entrega en Sesión 6</div></div><span class="phase-pct pp2">30%</span></div><div class="phase-body"><h3>Propuesta de Acción</h3><div class="phase-items"><div class="phase-item"><span class="pi-icon">💡</span><p><strong>Diseño:</strong> Propuesta técnico-social articulada a las realidades del territorio y sus saberes propios.</p></div><div class="phase-item"><span class="pi-icon">🌍</span><p><strong>Enfoque:</strong> Pluriverso, Buen Vivir, movilización social o estrategias propias del territorio.</p></div><div class="phase-item"><span class="pi-icon">🎯</span><p><strong>Objetivos:</strong> Claros, medibles, alcanzables; idealmente co-diseñados con la comunidad.</p></div><div class="phase-item"><span class="pi-icon">🔗</span><p><strong>Articulación:</strong> Responde explícitamente al diagnóstico de la Fase 1.</p></div></div><div class="delivery"><div class="dlabel">📦 Entrega · Sesión 6</div>Propuesta de acción con objetivos de transformación territorial, co-construida con el territorio.</div></div></div>
+      <div class="phase-card pc3"><div class="phase-top"><div><span class="phase-tag pt3">Fase 3 · Sesiones 7-9</span><div class="phase-sess">Entrega en Sesión 9</div></div><span class="phase-pct pp3">40%</span></div><div class="phase-body"><h3>Video y Reflexión Decolonial</h3><div class="phase-items"><div class="phase-item"><span class="pi-icon">🎬</span><p><strong>Video:</strong> 5-6 minutos que sintetice el proceso completo con narrativa territorial.</p></div><div class="phase-item"><span class="pi-icon">🗣️</span><p><strong>Testimonios:</strong> Voces, narrativas e imágenes del territorio y sus protagonistas.</p></div><div class="phase-item"><span class="pi-icon">✨</span><p><strong>Reflexión:</strong> Análisis crítico sobre decolonización del saber y ética de la imagen.</p></div><div class="phase-item"><span class="pi-icon">🏛️</span><p><strong>Plenaria:</strong> Presentación con retroalimentación colectiva y cierre pedagógico.</p></div></div><div class="delivery"><div class="dlabel">📦 Entrega · Sesión 9</div>Video 5-6 min, reflexión sobre decolonización del saber e inclusión de la propuesta aplicada.</div></div></div>
+    </div>
+    <div class="weight-box"><h4>Distribución de ponderación</h4><div class="wrow"><span class="wdot" style="background:var(--jade)"></span>Fase 1 – Diagnóstico Territorial<span style="margin-left:auto;color:var(--jade);font-weight:700">30%</span></div><div class="wrow"><span class="wdot" style="background:var(--gold)"></span>Fase 2 – Propuesta de Acción<span style="margin-left:auto;color:var(--gold);font-weight:700">30%</span></div><div class="wrow"><span class="wdot" style="background:var(--plum)"></span>Fase 3 – Video y Reflexión<span style="margin-left:auto;color:var(--plum);font-weight:700">40%</span></div><div class="wbar"><div class="wseg" style="width:30%;background:var(--jade)"></div><div class="wseg" style="width:30%;background:var(--gold)"></div><div class="wseg" style="width:40%;background:var(--plum)"></div></div></div>
+  </div>
+
+  <!-- ══════════ TAB: RÚBRICAS ══════════ -->
+  <div id="pane-rubricas" class="tab-pane">
+    <div class="sec-head"><h2>Rúbricas de Evaluación</h2><p>Ingresa calificaciones de 0.0 a 5.0 en cada criterio para calcular la nota automáticamente</p></div>
+    <div class="rub-nav">
+      <button class="rub-tab ar1" onclick="showRubric('r1',this)">Fase 1 · 30%</button>
+      <button class="rub-tab" onclick="showRubric('r2',this)">Fase 2 · 30%</button>
+      <button class="rub-tab" onclick="showRubric('r3',this)">Fase 3 · 40%</button>
+    </div>
+    <div id="rubric-r1" class="card rub-panel open"><div class="rp-head"><div class="rp-icon ri1">1</div><h3>Diagnóstico Territorial</h3></div><div class="rp-body"><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Identificación del colectivo <small>(20%)</small></span><input type="number" class="rub-input" id="r1c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')" aria-label="Calificación identificación del colectivo"></div><p class="rub-desc">Claridad en la selección del grupo social y su relación con el conflicto socio-ambiental identificado.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Marco analítico <small>(25%)</small></span><input type="number" class="rub-input" id="r1c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')" aria-label="Calificación marco analítico"></div><p class="rub-desc">Uso correcto de la Determinación Social o los Determinantes Sociales como marco explicativo del problema.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Herramientas y evidencia <small>(25%)</small></span><input type="number" class="rub-input" id="r1c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')" aria-label="Calificación herramientas y evidencia"></div><p class="rub-desc">Cartografía social o árbol de problemas. Calidad de fotografías y entrevistas a actores clave del territorio.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Análisis crítico <small>(30%)</small></span><input type="number" class="rub-input" id="r1c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r1')" aria-label="Calificación análisis crítico"></div><p class="rub-desc">Conexión clara y fundamentada entre sistemas económicos, ambiente y perfil de salud del grupo estudiado.</p></div><div class="rub-total"><div class="rub-total-lbl">Calificación Fase 1</div><div class="rub-total-val" id="r1-total">0.00</div></div></div></div>
+    <div id="rubric-r2" class="card rub-panel"><div class="rp-head"><div class="rp-icon ri2">2</div><h3>Propuesta de Acción</h3></div><div class="rp-body"><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Fundamentación teórica <small>(25%)</small></span><input type="number" class="rub-input" id="r2c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Integración coherente de marcos alternativos (pluriverso, Buen Vivir, movilización social).</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Objetivos definidos <small>(25%)</small></span><input type="number" class="rub-input" id="r2c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Objetivos claros, medibles y alcanzables; idealmente co-diseñados con la comunidad.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Viabilidad de la propuesta <small>(25%)</small></span><input type="number" class="rub-input" id="r2c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Factibilidad técnica, social y comunitaria del plan de acción propuesto.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Coherencia con Fase 1 <small>(25%)</small></span><input type="number" class="rub-input" id="r2c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r2')"></div><p class="rub-desc">Articulación lógica y explícita entre el diagnóstico territorial y la propuesta de solución.</p></div><div class="rub-total"><div class="rub-total-lbl">Calificación Fase 2</div><div class="rub-total-val" id="r2-total">0.00</div></div></div></div>
+    <div id="rubric-r3" class="card rub-panel"><div class="rp-head"><div class="rp-icon ri3">3</div><h3>Video y Reflexión Decolonial</h3></div><div class="rp-body"><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Calidad narrativa <small>(20%)</small></span><input type="number" class="rub-input" id="r3c1" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Coherencia y fuerza narrativa del proceso: del problema identificado a la solución propuesta.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Integración de testimonios <small>(20%)</small></span><input type="number" class="rub-input" id="r3c2" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Inclusión significativa y ética de voces del territorio y actores clave comunitarios.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Reflexión decolonial <small>(25%)</small></span><input type="number" class="rub-input" id="r3c3" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Profundidad del análisis crítico sobre decolonización del saber y ética de la imagen en la intervención.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Propuesta aplicada <small>(15%)</small></span><input type="number" class="rub-input" id="r3c4" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Claridad en cómo se aplicó la propuesta al problema social identificado en el territorio.</p></div><div class="rub-row"><div class="rub-row-top"><span class="rub-label">Producción técnica <small>(20%)</small></span><input type="number" class="rub-input" id="r3c5" min="0" max="5" step="0.1" placeholder="0.0" oninput="calcRubric('r3')"></div><p class="rub-desc">Calidad de imagen, audio y edición. Cumplimiento de la duración requerida (5 a 6 minutos).</p></div><div class="rub-total"><div class="rub-total-lbl">Calificación Fase 3</div><div class="rub-total-val" id="r3-total">0.00</div></div></div></div>
+    <div class="calc-card">
+      <h4>🎓 Calculadora de Nota Final del Curso</h4>
+      <div class="calc-rows">
+        <div class="calc-row"><span class="cr-lbl">Fase 1 – Diagnóstico Territorial</span><span class="cr-wt">× 30%</span><span class="cr-val" id="cf1" style="color:var(--jade)">0.00</span></div>
+        <div class="calc-row"><span class="cr-lbl">Fase 2 – Propuesta de Acción</span><span class="cr-wt">× 30%</span><span class="cr-val" id="cf2" style="color:var(--gold)">0.00</span></div>
+        <div class="calc-row"><span class="cr-lbl">Fase 3 – Video y Reflexión</span><span class="cr-wt">× 40%</span><span class="cr-val" id="cf3" style="color:var(--plum)">0.00</span></div>
+      </div>
+      <div class="calc-final">
+        <div class="calc-final-l"><div class="lbl">Nota Final del Curso</div><div class="grade" id="calc-grade">—</div></div>
+        <div class="calc-final-val" id="calc-final">0.00</div>
+      </div>
+    </div>
+    <div class="escala">
+      <div class="esc-item er"><div class="esc-val">0–2.9</div><div class="esc-lbl">No aprobado</div></div>
+      <div class="esc-item eo"><div class="esc-val">3.0–3.4</div><div class="esc-lbl">Suficiente</div></div>
+      <div class="esc-item ey"><div class="esc-val">3.5–3.9</div><div class="esc-lbl">Bueno</div></div>
+      <div class="esc-item eg"><div class="esc-val">4.0–4.5</div><div class="esc-lbl">Muy bueno</div></div>
+      <div class="esc-item ec"><div class="esc-val">4.6–5.0</div><div class="esc-lbl">Excelente</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════ TAB: BIBLIOGRAFÍA ══════════ -->
+  <div id="pane-bibliografia" class="tab-pane">
+    <div class="sec-head"><h2>Bibliografía</h2><p>Referencias fundamentales organizadas por eje temático</p></div>
+    <div class="drive-card">
+      <h3>📖 Lecturas Centrales de la Asignatura</h3>
+      <p>Accede a la carpeta compartida en Google Drive con los textos completos para cada módulo y sesión.</p>
+      <span class="drive-url" id="drive-url-el">https://drive.google.com/drive/folders/1aY2-Gzt5bwon8uYLPxsqg1n-Ecnn7FsW?usp=sharing</span>
+      <button class="copy-btn" onclick="copyDrive()"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copiar enlace</button>
+    </div>
+    <div id="bib-list"></div>
+    <div class="quote-card" style="margin-top:1.5rem"><p>Se recomienda explorar las obras completas de <strong style="font-style:normal;color:var(--jade)">Jaime Breilh</strong>, <strong style="font-style:normal;color:var(--gold)">Arturo Escobar</strong>, <strong style="font-style:normal;color:var(--plum)">Eduardo Menéndez</strong> y <strong style="font-style:normal;color:var(--coral)">Jason Moore</strong> como ejes teóricos centrales de la asignatura.</p></div>
+  </div>
+
+  </main>
+</div><!-- /page-body -->
+
+<footer>
+  <p>© 2026 &nbsp;<span>Maestría en Salud Pública · Areandina</span>&nbsp; · Profundización en Cultura, Ambiente y Sociedad · Semestre 4</p>
+</footer>
+</div><!-- /shell -->
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ═══ DATA ═══ */
+const UNIT_MAP  = {1:1,2:1,3:1,4:2,5:2,6:3,7:3,8:4,9:4};
+const UNIT_SIZE = {1:3,2:2,3:2,4:2};
+const TL = [
+  {n:1,unit:'Unidad 1',ub:'b1',title:'Apertura Territorial',phase:1},
+  {n:2,unit:'Unidad 1',ub:'b1',title:'Salud Ambiental',phase:1},
+  {n:3,unit:'Unidad 1',ub:'b1',title:'Determinación Social',phase:1},
+  {n:4,unit:'Unidad 2',ub:'b2',title:'Problemas Ambientales',phase:2},
+  {n:5,unit:'Unidad 2',ub:'b2',title:'Política Ambiental',phase:2},
+  {n:6,unit:'Unidad 3',ub:'b3',title:'Cultura · Pluriverso',phase:2},
+  {n:7,unit:'Unidad 3',ub:'b3',title:'Saberes Populares',phase:3},
+  {n:8,unit:'Unidad 4',ub:'b4',title:'Interculturalidad',phase:3},
+  {n:9,unit:'Unidad 4',ub:'b4',title:'Comunicación · Cierre',phase:3},
+];
+const RW = {r1:[.20,.25,.25,.30],r2:[.25,.25,.25,.25],r3:[.20,.20,.25,.15,.20]};
+const GRADES = [[4.6,'Excelente'],[4,'Muy bueno'],[3.5,'Bueno'],[3,'Suficiente'],[0,'No aprobado']];
+const BIB = [
+  {icon:'🌍',bg:'rgba(45,189,130,.13)',color:'var(--jade)',title:'Salud Global Crítica',sub:'Política, poder y salud pública global',
+   entries:['Diaconu, K. et al. (2020). <em>Understanding fragility: implications for global health research and practice.</em> Health Policy and Planning, 35(2), 235–243.<div class="bib-doi">https://doi.org/10.1093/heapol/czz142</div>','Benatar, S. (2016). <em>Politics, Power, Poverty and Global Health: Systems and Frames.</em> IJHPM, 5(10), 599–604.','Ventura, D. & Bueno, F. (2021). <em>De líder a paria de la salud global: Brasil como laboratorio del "neoliberalismo epidemiológico" ante la Covid-19.</em> Foro Internacional, 61(2), 427–467.','Arrizabalaga, J. (2021). <em>El desafío de las enfermedades (re)emergentes, los límites de la respuesta biomédica y el nuevo paradigma de salud global.</em> História, Ciências, Saúde-Manguinhos, 28(1), 255–281.']},
+  {icon:'🔬',bg:'rgba(212,150,10,.13)',color:'var(--gold)',title:'Determinación Social de la Salud',sub:'Teoría crítica latinoamericana',
+   entries:['Breilh, J. (2013). <em>La determinación social de la salud como herramienta de transformación hacia una nueva salud pública.</em> Rev. Facultad Nacional de Salud Pública, 31(supl 1), S13–S27.','Breilh, J. (2010). <em>Epidemiología crítica: Ciencia emancipadora e interculturalidad.</em> Buenos Aires: Lugar Editorial.','Laurell, A. C. (1982). <em>La salud-enfermedad como proceso social.</em> Revista Latinoamericana de Salud, 2(1), 7–25.']},
+  {icon:'🌱',bg:'rgba(139,111,224,.13)',color:'var(--plum)',title:'Alternativas al Desarrollo · Pluriverso',sub:'Arturo Escobar · Buen Vivir · Pensamiento Decolonial',
+   entries:['Escobar, A. (2005). <em>Una Ecología de la Diferencia.</em> En: Más Allá del Tercer Mundo. Universidad del Cauca. (Pág. 125–157)','Escobar, A. (2014). <em>Sentipensar con la tierra: Nuevas lecturas sobre desarrollo, territorio y diferencia.</em> Medellín: Ediciones UNAULA.','Escobar, A. (2014). <em>Territorios de diferencia: la ontología política de los "derechos al territorio".</em> En: Sentipensar con la tierra. (Pág. 67–123)','Escobar, A. (2018). <em>Designs for the Pluriverse: Radical Interdependence, Autonomy, and the Making of Worlds.</em> Duke University Press.','Acosta, A. (2013). <em>El Buen Vivir: Sumak Kawsay, una oportunidad para imaginar otros mundos.</em> Barcelona: Icaria Editorial.']},
+  {icon:'⚠️',bg:'rgba(217,95,95,.12)',color:'var(--coral)',title:'Capitaloceno y Crisis Ambiental',sub:'Ecología política · Extractivismo · Antropoceno',
+   entries:["Moore, J. W. (2014). <em>The End of Cheap Nature, or, How I Learned to Stop Worrying about 'the' Environment.</em> Structures of the world political economy, 285–314.",'Moore, J. W. (2015). <em>Capitalism in the Web of Life: Ecology and the Accumulation of Capital.</em> London: Verso Books.','Steffen, W. et al. (2018). <em>Trajectories of the Earth System in the Anthropocene.</em> PNAS, 115(33), 8252–8259.','Svampa, M. (2019). <em>Las fronteras del neoextractivismo en América Latina.</em> Bielefeld: Bielefeld University Press.','Gligo, N. et al. (2020). <em>La tragedia ambiental de América Latina y el Caribe.</em> CEPAL.','Haraway, D. (2016). <em>Staying with the Trouble: Making Kin in the Chthulucene.</em> Duke University Press.']},
+  {icon:'🌿',bg:'rgba(32,196,172,.12)',color:'var(--teal)',title:'Salud Ambiental',sub:'Política, legislación y enfoques territoriales',
+   entries:['OMS. (2018). <em>Cambio climático y salud.</em><div class="bib-doi">https://www.who.int/es/news-room/fact-sheets/detail/climate-change-and-health</div>','DPN. (2008). <em>CONPES 3550. Lineamientos para la formulación de la política integral de salud ambiental.</em> Colombia.','Gomez, J. (2019). <em>Retrato actual de la dimensión de salud ambiental en Colombia.</em> Interdisciplinary Journal of Epidemiology and Public Health, 2(2).','Blanco-Becerra, L. C. et al. (2015). <em>Estudios ecológicos en salud ambiental: más allá de la epidemiología.</em> Biomédica, 35(SPE), 191–206.','ONU. (2015). <em>Transformar nuestro mundo: la Agenda 2030 para el Desarrollo Sostenible.</em>']},
+  {icon:'🗣️',bg:'rgba(217,95,95,.11)',color:'var(--coral)',title:'Saberes Populares e Interculturalidad',sub:'Autoatención · Mediación cultural · Sistemas curativos',
+   entries:['Menéndez, E. L. (2003). <em>Modelos de atención de los padecimientos: de exclusiones teóricas y articulaciones prácticas.</em> Ciência & Saúde Coletiva, 8(1), 185–207.','Walsh, C. (2009). <em>Interculturalidad crítica y educación intercultural.</em> En: Construyendo Interculturalidad Crítica. La Paz: III-CAB.','De Sousa Santos, B. (2010). <em>Descolonizar el saber, reinventar el poder.</em> Montevideo: Ediciones Trilce.','Castillo, L. O., & López-Díaz, L. (2019). <em>Competencia cultural de enfermeras en salud pública con población indígena.</em> Avances en Enfermería, 37(1), 9–18.',"Holmes, S., & Bourgois, P. (2013). <em>\"Doctors Don't Know Anything\": The Clinical Gaze in Migrant Health.</em> In Fresh Fruit, Broken Bodies. University of California Press."]},
+  {icon:'📐',bg:'rgba(99,102,241,.12)',color:'#7b8cde',title:'Metodología y Antropología Médica',sub:'Investigación participativa · Cartografía · Narrativa',
+   entries:['Fals Borda, O. (2009). <em>Una sociología sentipensante para América Latina.</em> Buenos Aires: CLACSO.','Diez Tetamanti, J. M. (2018). <em>Cartografía social: Investigación e intervención desde las ciencias sociales.</em> Buenos Aires: Biblos.','Nichols, B. (2010). <em>Introduction to Documentary.</em> Bloomington: Indiana University Press.','Langdon, E., & Wiik, F. (2010). <em>Anthropology, health and illness: an introduction to the concept of culture applied to the health sciences.</em> Rev. Latino-Am. de Enfermagem, 18(3), 459–466.','Canguilhem, G. (1982). <em>Lo normal y lo patológico.</em> Siglo XXI.']},
+];
+
+/* ═══ STATE ═══ */
+let done = {};
+try { done = JSON.parse(localStorage.getItem('cas_done')||'{}'); } catch(e){}
+let rTotals = {r1:0,r2:0,r3:0};
+
+/* ═══ THEME ═══ */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('cas_theme', t); } catch(e){}
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+}
+// Init: saved pref → system pref → dark
+(function(){
+  let saved;
+  try { saved = localStorage.getItem('cas_theme'); } catch(e){}
+  if (saved) { applyTheme(saved); return; }
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) applyTheme('light');
+})();
+
+/* ═══ TABS ═══ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  btn.classList.add('active');
+  if (id==='timeline') renderTimeline();
+}
+
+/* ═══ SESSIONS ═══ */
+function toggleSess(n) {
+  const c = document.getElementById('sess-'+n);
+  c.classList.toggle('open');
+}
+function goToSess(n) {
+  const tabBtn = document.querySelector('[data-tab="sesiones"]');
+  showTab('sesiones', tabBtn);
+  setTimeout(()=>{
+    const card = document.getElementById('sess-'+n);
+    if (!card.classList.contains('open')) toggleSess(n);
+    card.scrollIntoView({behavior:'smooth',block:'center'});
+    document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+    document.getElementById('sl-'+n)?.classList.add('active');
+  },80);
+}
+
+/* ═══ PROGRESS ═══ */
+function toggleDone(n) {
+  done[n] = !done[n];
+  try { localStorage.setItem('cas_done', JSON.stringify(done)); } catch(e){}
+  refreshProgress();
+}
+function refreshProgress() {
+  let total = 0;
+  for (let i=1;i<=9;i++) {
+    const card = document.getElementById('sess-'+i);
+    const sc   = document.getElementById('sc-'+i);
+    if (card) card.classList.toggle('done', !!done[i]);
+    if (sc)   sc.classList.toggle('visible', !!done[i]);
+    if (done[i]) total++;
+  }
+  // Ring
+  const circ = 194.8; // 2*π*31
+  document.getElementById('ring-fill').style.strokeDashoffset = circ - (circ*total/9);
+  document.getElementById('ring-pct').textContent = Math.round(total/9*100)+'%';
+  // Unit bars
+  for (const [u,sz] of Object.entries(UNIT_SIZE)) {
+    let cnt=0;
+    for(let i=1;i<=9;i++){if(UNIT_MAP[i]==u&&done[i])cnt++;}
+    const fill = document.getElementById('ub-fill-'+u);
+    const txt  = document.getElementById('up'+u+'-txt');
+    if(fill) fill.style.width=(cnt/sz*100)+'%';
+    if(txt)  txt.textContent=cnt+'/'+sz;
+  }
+  renderTimeline();
+}
+
+/* ═══ TIMELINE ═══ */
+const P_CLASS = {1:'tl-f1 tp1',2:'tl-f2 tp2',3:'tl-f3 tp3'};
+const P_LABEL = {1:'Fase 1',2:'Fase 2',3:'Fase 3'};
+const U_CLASS  = {b1:'t1',b2:'t2',b3:'t3',b4:'t4'};
+function renderTimeline() {
+  const g = document.getElementById('tl-grid');
+  if(!g) return;
+  g.innerHTML = TL.map(s=>{
+    const [fc,tc] = P_CLASS[s.phase].split(' ');
+    const isDone = !!done[s.n];
+    return `<div class="tl-cell ${fc}${isDone?' done':''}" onclick="goToSess(${s.n})" role="button" tabindex="0" aria-label="Ir a sesión ${s.n}: ${s.title}">
+      <div class="tl-bg-num">${String(s.n).padStart(2,'0')}</div>
+      <div class="tl-unit ${U_CLASS[s.ub]}">${s.unit}</div>
+      <div class="tl-title">${s.title}</div>
+      <span class="tl-phase ${tc}">${P_LABEL[s.phase]}</span>
+      <div class="tl-done-stamp"><svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>Vista</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══ RUBRICS ═══ */
+function showRubric(id, btn) {
+  document.querySelectorAll('.rub-panel').forEach(p=>p.classList.remove('open'));
+  document.querySelectorAll('.rub-tab').forEach(b=>b.classList.remove('ar1','ar2','ar3'));
+  document.getElementById('rubric-'+id).classList.add('open');
+  btn.classList.add('a'+id);
+}
+function calcRubric(panel) {
+  let t=0;
+  RW[panel].forEach((w,i)=>{
+    const v=Math.min(5,Math.max(0,parseFloat(document.getElementById(panel+'c'+(i+1)).value)||0));
+    t+=v*w;
+  });
+  rTotals[panel]=t;
+  document.getElementById(panel+'-total').textContent=t.toFixed(2);
+  updateCalc();
+}
+function updateCalc() {
+  const f1=rTotals.r1*.30, f2=rTotals.r2*.30, f3=rTotals.r3*.40;
+  const final=f1+f2+f3;
+  document.getElementById('cf1').textContent=f1.toFixed(2);
+  document.getElementById('cf2').textContent=f2.toFixed(2);
+  document.getElementById('cf3').textContent=f3.toFixed(2);
+  document.getElementById('calc-final').textContent=final.toFixed(2);
+  const g = GRADES.find(([min])=>final>=min);
+  document.getElementById('calc-grade').textContent=g?g[1]:'—';
+}
+
+/* ═══ BIB ═══ */
+function renderBib() {
+  document.getElementById('bib-list').innerHTML = BIB.map((c,i)=>`
+    <div class="bib-cat" id="bc-${i}">
+      <button class="bib-cat-btn" onclick="toggleBib(${i})" aria-expanded="false" aria-controls="bl-${i}">
+        <div class="bib-icon" style="background:${c.bg};color:${c.color}">${c.icon}</div>
+        <div class="bib-info"><h4>${c.title}</h4><p>${c.sub}</p></div>
+        <svg class="bib-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div class="bib-list" id="bl-${i}" style="border-left:2px solid ${c.color}">
+        ${c.entries.map(e=>`<div class="bib-entry">${e}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function toggleBib(i) {
+  const cat = document.getElementById('bc-'+i);
+  const btn = cat.querySelector('.bib-cat-btn');
+  const open = cat.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+/* ═══ CLIPBOARD ═══ */
+function copyDrive() {
+  const url = document.getElementById('drive-url-el').textContent.trim();
+  navigator.clipboard.writeText(url).then(()=>toast('✓ Enlace copiado'));
+}
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+/* ═══ KEYBOARD — TIMELINE CELLS ═══ */
+document.addEventListener('keydown', e=>{
+  if(e.target.classList.contains('tl-cell')&&(e.key==='Enter'||e.key===' ')){
+    e.target.click(); e.preventDefault();
+  }
+});
+
+/* ═══ INIT ═══ */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderBib();
+  refreshProgress();
+  renderTimeline();
+});
+</script>
+</body>
+</html>
